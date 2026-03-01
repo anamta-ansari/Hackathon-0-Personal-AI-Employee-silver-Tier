@@ -1,0 +1,1 @@
+Process payment of $500 to vendor ABC Corp for invoice #12345. Use company credit card ending in 4567.

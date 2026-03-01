@@ -1,0 +1,231 @@
+2026-03-01 13:06:19 - Orchestrator - INFO - Orchestrator initialized for vault: D:\Hackathon-0\AI_Employee_Vault
+2026-03-01 13:06:19 - Orchestrator - INFO - Starting Orchestrator main loop...
+2026-03-01 13:06:19 - Orchestrator - INFO - Starting watcher processes...
+2026-03-01 13:06:19 - Orchestrator - INFO - Started filesystem watcher (PID: 2376)
+2026-03-01 13:06:19 - Orchestrator - INFO - Started 1 watcher(s)
+2026-03-01 13:06:49 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 13:06:49 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 13:06:49 - Orchestrator - INFO - Processing generic file: FILE_a41cd15fc281_20260301_130628.md
+2026-03-01 13:06:49 - Orchestrator - INFO - Created plan: PLAN_FILE_a41cd15fc281_20260301_130628_20260301_130649.md
+2026-03-01 13:09:19 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 13:09:19 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 13:09:19 - Orchestrator - INFO - Processing generic file: FILE_1874cb25bff1_20260301_130859.md
+2026-03-01 13:09:19 - Orchestrator - INFO - Created plan: PLAN_FILE_1874cb25bff1_20260301_130859_20260301_130919.md
+2026-03-01 13:31:10 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 13:31:19 - Orchestrator - INFO - Shutting down Orchestrator...
+2026-03-01 13:31:19 - Orchestrator - INFO - Stopping filesystem watcher (PID: 2376)...
+2026-03-01 13:31:19 - Orchestrator - INFO - Orchestrator shutdown complete
+2026-03-01 13:31:24 - Orchestrator - INFO - Orchestrator initialized for vault: D:\Hackathon-0\AI_Employee_Vault
+2026-03-01 13:31:24 - Orchestrator - INFO - Starting Orchestrator main loop...
+2026-03-01 13:31:24 - Orchestrator - INFO - Starting watcher processes...
+2026-03-01 13:31:24 - Orchestrator - INFO - Started filesystem watcher (PID: 2252)
+2026-03-01 13:31:24 - Orchestrator - INFO - Started 1 watcher(s)
+2026-03-01 13:31:24 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:31:24 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_1874cb25bff1_20260301_130859_20260301_130919.md
+2026-03-01 13:31:24 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 13:31:24 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_a41cd15fc2817d97_20260228_174929_20260228_175041.md
+2026-03-01 13:31:24 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 13:31:24 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_a41cd15fc281_20260301_130628_20260301_130649.md
+2026-03-01 13:31:25 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 13:31:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:31:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:32:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:32:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:33:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:33:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:34:25 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 13:34:25 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 13:34:25 - Orchestrator - INFO - Processing generic file: FILE_1c089fdfa550_20260301_133411.md
+2026-03-01 13:34:25 - Orchestrator - INFO - Created plan: PLAN_FILE_1c089fdfa550_20260301_133411_20260301_133425.md
+2026-03-01 13:34:25 - Orchestrator - INFO - No approval required for: PLAN_FILE_1c089fdfa550_20260301_133411_20260301_133425.md
+2026-03-01 13:34:25 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_1c089fdfa550_20260301_133411_20260301_133425.md
+2026-03-01 13:34:25 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 13:34:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:34:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:35:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:35:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:36:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:36:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:37:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:37:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:38:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:38:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:39:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:39:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:40:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:40:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:41:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:41:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:42:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:42:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:43:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:43:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:44:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:44:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:45:25 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:45:55 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:46:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:46:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:47:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:47:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:48:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:48:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:49:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:49:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:50:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:50:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:51:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:51:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:52:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:52:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:53:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:53:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:54:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:54:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:55:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:55:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:56:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:56:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:57:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:57:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:58:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:58:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:59:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 13:59:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 14:00:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 14:00:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 14:01:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 14:01:56 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 14:02:26 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:13:11 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:13:41 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:14:11 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:14:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:15:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:15:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:16:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:16:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:17:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:17:42 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 17:17:42 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 17:17:42 - Orchestrator - INFO - Processing generic file: FILE_6d7a5f7b3c60_20260301_171726.md
+2026-03-01 17:17:42 - Orchestrator - INFO - Created plan: PLAN_FILE_6d7a5f7b3c60_20260301_171726_20260301_171742.md
+2026-03-01 17:17:42 - Orchestrator - INFO - No approval required for: PLAN_FILE_6d7a5f7b3c60_20260301_171726_20260301_171742.md
+2026-03-01 17:17:42 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_6d7a5f7b3c60_20260301_171726_20260301_171742.md
+2026-03-01 17:17:42 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 17:17:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:18:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:18:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:19:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:19:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:20:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:20:42 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 17:20:42 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 17:20:42 - Orchestrator - INFO - Processing generic file: FILE_b1770d9906f1_20260301_171956.md
+2026-03-01 17:20:42 - Orchestrator - INFO - Created plan: PLAN_FILE_b1770d9906f1_20260301_171956_20260301_172042.md
+2026-03-01 17:20:42 - Orchestrator - INFO - No approval required for: PLAN_FILE_b1770d9906f1_20260301_171956_20260301_172042.md
+2026-03-01 17:20:42 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_b1770d9906f1_20260301_171956_20260301_172042.md
+2026-03-01 17:20:42 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 17:20:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:21:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:21:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:22:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:22:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:23:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:23:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:24:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:24:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:25:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:25:42 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:26:12 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:26:43 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:27:13 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:27:43 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 17:27:43 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 17:27:43 - Orchestrator - INFO - Processing generic file: FILE_9e849937e542_20260301_172726.md
+2026-03-01 17:27:43 - Orchestrator - INFO - Created plan: PLAN_FILE_9e849937e542_20260301_172726_20260301_172743.md
+2026-03-01 17:27:43 - Orchestrator - INFO - No approval required for: PLAN_FILE_9e849937e542_20260301_172726_20260301_172743.md
+2026-03-01 17:27:43 - Orchestrator - INFO - Auto-completing task (no approval required): PLAN_FILE_9e849937e542_20260301_172726_20260301_172743.md
+2026-03-01 17:27:43 - Orchestrator - INFO - Auto-completed task (no approval required)
+2026-03-01 17:27:43 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:28:13 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:28:43 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:29:13 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:29:43 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:30:13 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:30:43 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:30:43 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:44 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:48 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:48 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:48 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:49 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:49 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:50 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:50 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:51 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:51 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:51 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:52 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:53 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:53 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:55 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:55 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:30:55 - Orchestrator - INFO - Received signal 2, initiating shutdown...
+2026-03-01 17:31:13 - Orchestrator - INFO - Shutting down Orchestrator...
+2026-03-01 17:31:13 - Orchestrator - INFO - Stopping filesystem watcher (PID: 2252)...
+2026-03-01 17:31:13 - Orchestrator - INFO - Orchestrator shutdown complete
+2026-03-01 17:31:21 - Orchestrator - INFO - Orchestrator initialized for vault: D:\Hackathon-0\AI_Employee_Vault
+2026-03-01 17:31:21 - Orchestrator - INFO - Starting Orchestrator main loop...
+2026-03-01 17:31:21 - Orchestrator - INFO - Starting watcher processes...
+2026-03-01 17:31:21 - Orchestrator - INFO - Started filesystem watcher (PID: 6656)
+2026-03-01 17:31:21 - Orchestrator - INFO - Started 1 watcher(s)
+2026-03-01 17:31:21 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:31:21 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:31:51 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:32:21 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:32:51 - Orchestrator - INFO - Found 1 file(s) in Needs_Action
+2026-03-01 17:32:51 - Orchestrator - INFO - Processing 1 file(s) with Qwen Code simulation...
+2026-03-01 17:32:51 - Orchestrator - INFO - Processing generic file: FILE_6b9d41bd83fd_20260301_173218.md
+2026-03-01 17:32:51 - Orchestrator - INFO - Created plan: PLAN_FILE_6b9d41bd83fd_20260301_173218_20260301_173251.md
+2026-03-01 17:32:51 - Orchestrator - INFO - Plan requires approval: PLAN_FILE_6b9d41bd83fd_20260301_173218_20260301_173251.md
+2026-03-01 17:32:51 - Orchestrator - INFO - Created approval request: APPROVAL_plan_execution_20260301_173251_20260301_173251.md
+2026-03-01 17:32:51 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:33:21 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:33:52 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:34:22 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:34:52 - Orchestrator - INFO - Executing approved action: APPROVAL_plan_execution_20260301_173251_20260301_173251.md
+2026-03-01 17:34:52 - Orchestrator - INFO - ACTION EXECUTED (dry-run mode)
+2026-03-01 17:34:52 - Orchestrator - INFO - Task completed and archived to Done/
+2026-03-01 17:34:52 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:35:22 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:35:52 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:36:22 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:36:52 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:37:22 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:37:52 - Orchestrator - INFO - Dashboard updated with current stats
+2026-03-01 17:38:22 - Orchestrator - INFO - Dashboard updated with current stats
