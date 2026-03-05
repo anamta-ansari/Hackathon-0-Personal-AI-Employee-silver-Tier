@@ -1,0 +1,80 @@
+[
+  {
+    "timestamp": "2026-03-05T15:55:03.496325",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "recipient@example.com",
+    "subject": "Hello",
+    "message_id": "19cbda1957b4e516",
+    "thread_id": "19cbda1957b4e516",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-03-05T17:24:11.701627",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "anamtaanxarii@gmail.com",
+    "subject": "SendEmailSkill Test - 2026-03-05T17:24:10.917002",
+    "message_id": "19cbdf331f3e0a10",
+    "thread_id": "19cbdf331f3e0a10",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-03-05T17:28:15.738687",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "anamtaanxarii@gmail.com",
+    "subject": "SendEmailSkill Test - 2026-03-05T17:28:15.098983",
+    "message_id": "19cbdf6ea4f0352c",
+    "thread_id": "19cbdf6ea4f0352c",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-03-05T20:41:45.597496",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "anamtaanxarii@gmail.com",
+    "subject": "Re: URGENT: Please send project status update",
+    "message_id": "19cbea8139a3b52d",
+    "thread_id": "19cbea8139a3b52d",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-03-05T21:36:58.547197",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "anamtaanxarii@gmail.com",
+    "subject": "Re: testing",
+    "message_id": "19cbeda9fb108655",
+    "thread_id": "19cbeda9fb108655",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  },
+  {
+    "timestamp": "2026-03-05T21:37:38.828800",
+    "action_type": "email_send",
+    "actor": "send_email_skill",
+    "to": "anamtaanxarii@gmail.com",
+    "subject": "Re: testing",
+    "message_id": "19cbedb3d9cb9d5d",
+    "thread_id": "19cbedb3d9cb9d5d",
+    "cc": null,
+    "bcc": null,
+    "attachments": [],
+    "dry_run": false
+  }
+]

@@ -5,12 +5,17 @@ Specification: AGENT-SKILLS-003
 
 Purpose: Archive completed items to /Done/ folder
 
+SINGLE FILE LIFECYCLE:
+- Moves the same file through folders as it progresses
+- Adds completion metadata to the file
+- Preserves the original filename for tracking
+
 Input:
     - file_path: Path to file in Needs_Action, Approved, or other folder
     - vault_path: Path to vault root
-    
+
 Output:
-    - File moved to /Done/ with timestamp
+    - File moved to /Done/ with completion metadata
     - Status updated in file frontmatter
 """
 
@@ -26,17 +31,23 @@ def move_to_done(
     file_path: str,
     vault_path: str,
     add_completion_note: bool = True,
-    completion_note: Optional[str] = None
+    completion_note: Optional[str] = None,
+    preserve_filename: bool = True  # NEW: For single-file lifecycle
 ) -> Dict[str, Any]:
     """
     Move a file to the Done folder and update its status.
-    
+
+    SINGLE FILE LIFECYCLE MODE:
+    - preserve_filename=True: Keep original filename (default)
+    - File maintains same name as it moves through folders
+
     Args:
         file_path: Path to file to move
         vault_path: Path to Obsidian vault root
         add_completion_note: Whether to add completion metadata
         completion_note: Optional custom completion note
-        
+        preserve_filename: Whether to keep the same filename (default: True)
+
     Returns:
         Dict: Result with success status and new file path
     """
@@ -46,45 +57,56 @@ def move_to_done(
         'new_path': None,
         'error': None
     }
-    
+
     try:
         # Convert to Path objects
         src_path = Path(file_path)
         vault = Path(vault_path)
         done_dir = vault / 'Done'
-        
+
         # Ensure Done directory exists
         done_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Validate source file exists
         if not src_path.exists():
             result['error'] = f"File not found: {file_path}"
             return result
-        
+
         # Read original content
         content = src_path.read_text(encoding='utf-8')
-        
+
         # Add completion metadata if requested
         if add_completion_note:
             content = add_completion_metadata(content, completion_note)
+
+        # Generate destination filename
+        if preserve_filename:
+            # SINGLE FILE LIFECYCLE: Keep original filename
+            dst_filename = src_path.name
+        else:
+            # LEGACY MODE: Add timestamp to filename
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            dst_filename = f"DONE_{src_path.stem}_{timestamp}{src_path.suffix}"
         
-        # Generate new filename with completion timestamp
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        new_filename = f"DONE_{src_path.stem}_{timestamp}{src_path.suffix}"
-        dst_path = done_dir / new_filename
-        
+        dst_path = done_dir / dst_filename
+
+        # Handle duplicate filenames (add timestamp if file exists)
+        if dst_path.exists():
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            dst_path = done_dir / f"{src_path.stem}_{timestamp}{src_path.suffix}"
+
         # Write to destination
         dst_path.write_text(content, encoding='utf-8')
-        
+
         # Remove original file
         src_path.unlink()
-        
+
         result['success'] = True
         result['new_path'] = str(dst_path)
-        
+
     except Exception as e:
         result['error'] = str(e)
-    
+
     return result
 
 
