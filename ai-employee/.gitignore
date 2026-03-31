@@ -1,4 +1,49 @@
+# ═══════════════════════════════════════════════════════════════
+# CRITICAL: ENVIRONMENT VARIABLES (HIGHEST PRIORITY)
+# ═══════════════════════════════════════════════════════════════
+
+# Environment variables file - CONTAINS ALL SECRETS
+.env
+.env.local
+.env.*.local
+*.env
+
+# But allow example file
+!.env.example
+
+# ═══════════════════════════════════════════════════════════════
+# CRITICAL: Credentials & Sensitive Data
+# ═══════════════════════════════════════════════════════════════
+
+# LinkedIn Session
+config/linkedin_session.json
+config/linkedin_storage.json
+config/linkedin_profile.json
+*session*.json
+*storage*.json
+*profile*.json
+
+# Gmail OAuth
+config/gmail_credentials.json
+config/gmail_token.json
+config/token.json
+credentials*.json
+token*.json
+*gmail*.json
+
+# API Keys & Secrets
+config/api_keys.json
+config/secrets.json
+*secret*
+*apikey*
+*.key
+*.pem
+
+# ═══════════════════════════════════════════════════════════════
 # Python
+# ═══════════════════════════════════════════════════════════════
+
+# Python cache
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,64 +64,104 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual environments
 venv/
 env/
 ENV/
 .venv
+.pytest_cache/
 
-# Environment variables
-.env
-.env.local
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
 
-# IDE
+# ═══════════════════════════════════════════════════════════════
+# IDE & Editors
+# ═══════════════════════════════════════════════════════════════
+
+# VS Code
 .vscode/
+*.code-workspace
+
+# JetBrains IDEs
 .idea/
+*.iml
+*.ipr
+*.iws
+
+# Other editors
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
 
-# OS
+# ═══════════════════════════════════════════════════════════════
+# Operating System
+# ═══════════════════════════════════════════════════════════════
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
 Thumbs.db
-
-# AI Employee Vault (optional - include if you want to track vault)
-# AI_Employee_Vault/Needs_Action/
-# AI_Employee_Vault/Plans/
-# AI_Employee_Vault/Done/
-# AI_Employee_Vault/Pending_Approval/
-# AI_Employee_Vault/Approved/
-# AI_Employee_Vault/Rejected/
-# AI_Employee_Vault/Logs/
-
-# Keep these for version control:
-# AI_Employee_Vault/Dashboard.md
-# AI_Employee_Vault/Company_Handbook.md
-# AI_Employee_Vault/Business_Goals.md
-
-# Credentials and tokens
-*.json
-!package.json
-credentials.json
-token.json
-gmail_token.json
-service_account.json
-
-# Logs
-Logs/
-*.log
-
-# Cache
-.cache/
-
-# Test artifacts
-.pytest_cache/
-.coverage
-htmlcov/
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
 
 # Temporary files
 tmp/
 temp/
 *.tmp
 *.bak
+*.swp
+*~
+
+# ═══════════════════════════════════════════════════════════════
+# AI Employee Specific
+# ═══════════════════════════════════════════════════════════════
+
+# Logs (may contain sensitive data)
+logs/
+*.log
+Logs/
+
+# Cache
+.cache/
+*.cache
+
+# Test artifacts
+test_output/
+test_results/
+
+# ═══════════════════════════════════════════════════════════════
+# Optional: AI Employee Vault (Uncomment to exclude)
+# ═══════════════════════════════════════════════════════════════
+
+# These contain your business data - exclude if you don't want to share
+# AI_Employee_Vault/Needs_Action/
+# AI_Employee_Vault/Plans/
+# AI_Employee_Vault/Done/
+# AI_Employee_Vault/Pending_Approval/
+# AI_Employee_Vault/Approved/
+# AI_Employee_Vault/Rejected/
+# AI_Employee_Vault/Failed/
+# AI_Employee_Vault/Logs/
+
+# Keep these for version control (templates):
+# AI_Employee_Vault/Dashboard.md
+# AI_Employee_Vault/Company_Handbook.md
+# AI_Employee_Vault/Business_Goals.md

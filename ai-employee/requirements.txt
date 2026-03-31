@@ -1,5 +1,6 @@
+# ═══════════════════════════════════════════════════════════════
 # AI Employee - Python Dependencies
-# Silver Tier Requirements
+# ═══════════════════════════════════════════════════════════════
 
 # Core dependencies
 watchdog>=4.0.0          # File system monitoring
@@ -9,15 +10,19 @@ google-api-python-client>=2.0.0
 google-auth-httplib2>=0.2.0
 google-auth-oauthlib>=1.0.0
 
-# LinkedIn API (for LinkedIn posting - Silver Tier)
-linkedin-api>=2.0.3
-
-# Playwright (for WhatsApp Web watcher - Silver Tier)
+# Playwright (for browser automation)
 playwright>=1.40.0
+playwright-stealth>=1.0.6
+
+# Environment Variables (CRITICAL for security)
+python-dotenv>=1.0.0     # Load .env files
+
+# Data formats
+PyYAML>=6.0.1            # YAML parsing for frontmatter
+
+# Utilities
+pyperclip>=1.8.2         # Clipboard support for paste operations
 
 # Testing
 pytest>=8.0.0
 pytest-asyncio>=0.23.0
-
-# Utilities
-python-dotenv>=1.0.0     # Environment variable management

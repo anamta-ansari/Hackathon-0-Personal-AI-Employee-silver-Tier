@@ -29,6 +29,15 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 import threading
 
+# Import config loader for environment variables
+try:
+    from ..config_loader import Config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+    Config = None
+    CONFIG_AVAILABLE = False
+
 # Environment variable for vault path (set in .env file)
 # Default: D:/Hackathon-0/AI_Employee_Vault (root vault)
 DEFAULT_VAULT_PATH = os.getenv('VAULT_PATH', 'D:/Hackathon-0/AI_Employee_Vault')
@@ -46,15 +55,18 @@ from skills.send_email import SendEmailSkill
 
 @dataclass
 class OrchestratorConfig:
-    """Configuration for the orchestrator."""
-    vault_path: str = str(DEFAULT_VAULT_PATH)
-    check_interval: int = 30
+    """Configuration for the orchestrator.
+    
+    Uses environment variables from .env file when available.
+    """
+    vault_path: str = str(Config.VAULT_PATH if CONFIG_AVAILABLE and Config else os.getenv('VAULT_PATH', 'D:/Hackathon-0/AI_Employee_Vault'))
+    check_interval: int = Config.CYCLE_INTERVAL if CONFIG_AVAILABLE and Config else int(os.getenv('CYCLE_INTERVAL', '30'))
     dashboard_update_interval: int = 300
     enable_gmail_watcher: bool = False
     enable_filesystem_watcher: bool = True
     gmail_credentials_path: Optional[str] = None
     dry_run: bool = False
-    log_level: str = "INFO"
+    log_level: str = Config.LOG_LEVEL if CONFIG_AVAILABLE and Config else os.getenv('LOG_LEVEL', "INFO")
     rejected_auto_delete_days: int = 7  # Auto-delete rejected files after N days
     enable_rejected_auto_delete: bool = True
 

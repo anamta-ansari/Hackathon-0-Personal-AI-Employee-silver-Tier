@@ -47,6 +47,15 @@ except ImportError:
     logger = logging.getLogger(__name__)
     logger.warning("Playwright not installed. Run: pip install playwright playwright-stealth")
 
+# Import config loader for environment variables
+try:
+    from ..config_loader import Config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.warning("Config loader not available - using file-based config")
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -60,6 +69,7 @@ class LinkedInSessionAuth:
     LinkedIn Session Authentication Manager
 
     Handles browser-based authentication with LinkedIn using session cookies.
+    Supports both file-based and environment variable-based configuration.
     """
 
     def __init__(self, config_dir: Optional[str] = None):
@@ -72,6 +82,12 @@ class LinkedInSessionAuth:
         # Resolve paths
         self.project_root = Path(__file__).parent.parent.parent
         self.config_dir = Path(config_dir) if config_dir else self.project_root / 'config'
+        
+        # Try to load session from .env first (for security)
+        if CONFIG_AVAILABLE and Config.LINKEDIN_SESSION_TOKEN:
+            logger.info("✓ Found LinkedIn session in .env")
+            # Save to file for compatibility with existing code
+            self._save_session_from_env()
         
         # Session files
         self.session_file = self.config_dir / 'linkedin_session.json'
@@ -97,6 +113,54 @@ class LinkedInSessionAuth:
         logger.info(f"LinkedInSessionAuth initialized")
         logger.info(f"Config directory: {self.config_dir}")
         logger.info(f"Session file: {self.session_file}")
+
+    def _save_session_from_env(self) -> bool:
+        """
+        Save session from .env environment variable to file
+        
+        Returns:
+            True if saved successfully
+        """
+        if not CONFIG_AVAILABLE or not Config.LINKEDIN_SESSION_TOKEN:
+            return False
+        
+        try:
+            # Create session data from .env
+            session_data = {
+                'cookies': [
+                    {
+                        'name': 'li_at',
+                        'value': Config.LINKEDIN_SESSION_TOKEN,
+                        'domain': Config.LINKEDIN_COOKIE_DOMAIN,
+                        'path': '/',
+                        'httpOnly': True,
+                        'secure': True
+                    }
+                ],
+                'saved_at': datetime.now().isoformat(),
+                'expires_at': (datetime.now() + timedelta(days=30)).isoformat(),
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'source': '.env'
+            }
+            
+            # Ensure config directory exists
+            self.config_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save session file
+            with open(self.session_file, 'w', encoding='utf-8') as f:
+                json.dump(session_data, f, indent=2)
+            
+            # Create empty storage file if it doesn't exist
+            if not self.storage_file.exists():
+                with open(self.storage_file, 'w', encoding='utf-8') as f:
+                    json.dump({}, f, indent=2)
+            
+            logger.info(f"✓ Saved LinkedIn session from .env to {self.session_file}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error saving session from .env: {e}")
+            return False
 
     def _session_exists(self) -> bool:
         """Check if session files exist"""

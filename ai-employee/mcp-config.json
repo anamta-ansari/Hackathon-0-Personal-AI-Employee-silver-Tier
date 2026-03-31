@@ -1,0 +1,32 @@
+{
+  "servers": [
+    {
+      "name": "linkedin",
+      "command": "python",
+      "args": [
+        "D:/Hackathon-0/ai-employee/src/skills/linkedin_mcp_server.py",
+        "--vault",
+        "D:/Hackathon-0/AI_Employee_Vault"
+      ],
+      "env": {
+        "VAULT_PATH": "D:/Hackathon-0/AI_Employee_Vault",
+        "LINKEDIN_EMAIL": "${LINKEDIN_EMAIL}",
+        "LINKEDIN_PASSWORD": "${LINKEDIN_PASSWORD}"
+      },
+      "disabled": false
+    },
+    {
+      "name": "email",
+      "command": "python",
+      "args": [
+        "D:/Hackathon-0/ai-employee/src/skills/email_mcp_server.py",
+        "--vault",
+        "D:/Hackathon-0/AI_Employee_Vault"
+      ],
+      "env": {
+        "VAULT_PATH": "D:/Hackathon-0/AI_Employee_Vault"
+      },
+      "disabled": true
+    }
+  ]
+}

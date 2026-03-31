@@ -1,495 +1,576 @@
-# AI Employee - Bronze Tier
+# 🤖 AI Employee - Secure Automation System
 
-**Your Personal AI Employee powered by Qwen Code**
+> Intelligent LinkedIn posting and Gmail management with human-in-the-loop approval workflow.
+> **Now with enhanced security using environment variables.**
 
-A local-first, agent-driven automation system that manages your personal and business affairs 24/7 using Qwen Code as the reasoning engine and Obsidian as the knowledge base.
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Bronze Tier Deliverables](#bronze-tier-deliverables)
-- [Project Structure](#project-structure)
-- [Testing](#testing)
-- [Troubleshooting](#troubleshooting)
-- [Next Steps](#next-steps)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
+[![Playwright](https://img.shields.io/badge/Playwright-1.40.0-green.svg)](https://playwright.dev/)
+[![Security](https://img.shields.io/badge/security-environment%20variables-brightgreen)]()
 
 ---
 
-## Overview
+## 🔐 Security First
 
-The AI Employee is an autonomous agent system that:
+**IMPORTANT:** This project uses environment variables (`.env` file) to protect sensitive credentials.
 
-1. **Perceives** - Monitors Gmail, file systems, and other inputs via "Watcher" scripts
-2. **Reasons** - Uses Qwen Code to analyze, plan, and make decisions
-3. **Acts** - Executes actions through MCP servers and file operations
-4. **Remembers** - Stores everything in Obsidian for transparency and audit
-
-### Bronze Tier Scope
-
-The Bronze Tier provides the foundation:
-- ✅ File system monitoring for task inputs
-- ✅ Qwen Code integration for reasoning
-- ✅ Obsidian vault as knowledge base
-- ✅ Agent Skills for common tasks
-- ✅ Human-in-the-loop approval workflow
-- ✅ Audit logging for all actions
+**Before GitHub upload:**
+1. ✅ All credentials moved to `.env` file
+2. ✅ `.env` is in `.gitignore` (won't be committed)
+3. ✅ `.env.example` template is safe to commit
+4. ✅ Code reads from environment variables via `config_loader.py`
 
 ---
 
-## Features
+## 📖 Table of Contents
 
-### Core Features
-
-| Feature | Description | Status |
-|---------|-------------|--------|
-| File System Watcher | Monitor folder for new files | ✅ Complete |
-| Email Processing | Process email action files | ✅ Complete |
-| Plan Generation | Auto-create action plans | ✅ Complete |
-| Approval Workflow | Human-in-the-loop for sensitive actions | ✅ Complete |
-| Dashboard | Real-time system status | ✅ Complete |
-| Audit Logging | Complete action history | ✅ Complete |
-| Agent Skills | Modular task execution | ✅ Complete |
-
-### Agent Skills
-
-| Skill | Purpose |
-|-------|---------|
-| `process_email` | Process email files and create plans |
-| `update_dashboard` | Refresh Dashboard.md with current state |
-| `log_action` | Write actions to audit log |
-| `create_approval_request` | Generate approval request files |
-| `move_to_done` | Archive completed items |
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [Commands Reference](#-commands-reference)
+- [Project Structure](#-project-structure)
+- [Security](#-security)
+- [Troubleshooting](#-troubleshooting)
 
 ---
 
-## Architecture
+## 🚀 Quick Start
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    EXTERNAL SOURCES                         │
-│         Gmail │ WhatsApp │ Bank APIs │ File System          │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   PERCEPTION LAYER                          │
-│              ┌─────────────────────┐                        │
-│              │   Gmail Watcher     │                        │
-│              │   Filesystem Watcher│                        │
-│              └──────────┬──────────┘                        │
-└─────────────────────────┼───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                  OBSIDIAN VAULT (Local)                     │
-│  /Needs_Action  /Plans  /Done  /Logs  /Pending_Approval     │
-│  Dashboard.md  Company_Handbook.md  Business_Goals.md       │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   REASONING LAYER                           │
-│              ┌─────────────────────┐                        │
-│              │     QWEN CODE       │                        │
-│              │  Read → Think →     │                        │
-│              │   Plan → Write      │                        │
-│              └─────────────────────┘                        │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                ORCHESTRATION LAYER                          │
-│              ┌─────────────────────┐                        │
-│              │  orchestrator.py    │                        │
-│              │  - Scheduling       │                        │
-│              │  - Process Mgmt     │                        │
-│              └─────────────────────┘                        │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Quick Start
-
-### Windows
-
-```batch
-cd ai-employee
-start.bat
-```
-
-### Manual Start
+### 5-Minute Setup
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Copy environment template
-copy .env.example .env   # Windows
-cp .env.example .env     # Linux/Mac
-
-# Edit .env with your settings
-# Then start the orchestrator
-python src/orchestration/orchestrator.py --dry-run
-```
-
----
-
-## Installation
-
-### Prerequisites
-
-| Software | Version | Purpose |
-|----------|---------|---------|
-| Python | 3.13+ | Runtime |
-| Obsidian | 1.10.6+ | Knowledge base |
-| Git | Latest | Version control |
-| Qwen Code | Latest | AI reasoning |
-
-### Step-by-Step Installation
-
-#### 1. Clone or Download
-
-```bash
+# 1. Clone and enter directory
 cd D:\Hackathon-0\ai-employee
-```
 
-#### 2. Create Virtual Environment (Recommended)
+# 2. Run setup script (creates .env and directories)
+python setup.py
 
-```bash
-python -m venv venv
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # Linux/Mac
-```
-
-#### 3. Install Dependencies
-
-```bash
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-#### 4. Setup Environment
+# 4. Install Playwright browsers
+playwright install chromium
 
-```bash
-cp .env.example .env
-```
+# 5. Edit .env file with your credentials
+notepad .env
 
-Edit `.env` with your settings (see [Configuration](#configuration)).
+# 6. Authenticate LinkedIn
+python src/skills/linkedin_session_auth.py login
 
-#### 5. Verify Installation
-
-```bash
-python -c "from watchers import FilesystemWatcher; print('OK')"
-```
-
----
-
-## Configuration
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and configure:
-
-```bash
-# Vault Configuration
-OBSIDIAN_VAULT_PATH=D:\Hackathon-0\AI_Employee_Vault
-
-# Watcher Settings
-ENABLE_GMAIL_WATCHER=false          # Set true for Gmail monitoring
-ENABLE_FILESYSTEM_WATCHER=true      # File drop monitoring
-
-# Orchestrator Settings
-ORCHESTRATOR_CHECK_INTERVAL=30      # Seconds between checks
-DASHBOARD_UPDATE_INTERVAL=300       # Seconds between dashboard updates
-
-# Development
-DRY_RUN=false                       # Set true for testing
-LOG_LEVEL=INFO                      # DEBUG, INFO, WARNING, ERROR
-```
-
-### Gmail Setup (Optional for Silver Tier)
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project
-3. Enable Gmail API
-4. Create OAuth 2.0 credentials
-5. Download `credentials.json` to project root
-6. Set `ENABLE_GMAIL_WATCHER=true` in `.env`
-
----
-
-## Usage
-
-### Starting the System
-
-```bash
-# Dry run mode (no side effects)
-python src/orchestration/orchestrator.py --dry-run
-
-# Production mode
+# 7. Start automation
 python src/orchestration/orchestrator.py
 ```
 
-### Testing File Drop
+---
 
-1. Start the orchestrator
-2. Drop a file into `AI_Employee_Vault/Inbox/`
-3. Watcher detects the file
-4. Action file created in `Needs_Action/`
-5. Qwen processes and creates plan in `Plans/`
-6. Dashboard updates automatically
+## 📦 Installation
 
-### Manual Processing
+### Step 1: Clone Repository
 
 ```bash
-# Process a specific email file
-python src/skills/process_email.py \
-  "D:\Hackathon-0\AI_Employee_Vault\Needs_Action\EMAIL_test.md" \
-  "D:\Hackathon-0\AI_Employee_Vault"
+cd D:\Hackathon-0
+git clone <repository-url> ai-employee
+cd ai-employee
+```
 
-# Update dashboard
-python src/skills/update_dashboard.py \
-  "D:\Hackathon-0\AI_Employee_Vault"
+### Step 2: Run Setup Script
 
-# Log an action
-python src/skills/log_action.py \
-  "D:\Hackathon-0\AI_Employee_Vault" \
-  "test_action" "user" "test_target"
+```bash
+python setup.py
+```
+
+**What it does:**
+- Creates `.env` file from `.env.example` template
+- Creates vault directories (`Needs_Action/`, `Approved/`, `Done/`, etc.)
+- Creates `config/` and `logs/` directories
+- Verifies Python dependencies
+
+### Step 3: Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+**Dependencies:**
+- `playwright` - Browser automation
+- `playwright-stealth` - Avoid bot detection
+- `python-dotenv` - Load `.env` files (CRITICAL for security)
+- `PyYAML` - Parse YAML frontmatter
+- `google-api-python-client` - Gmail integration
+- `watchdog` - File system monitoring
+
+### Step 4: Install Playwright Browsers
+
+```bash
+playwright install chromium
+```
+
+**Size:** ~300MB download
+
+### Step 5: (Optional) Create Virtual Environment
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
 ---
 
-## Bronze Tier Deliverables
+## ⚙️ Configuration
 
-### ✅ Completed Deliverables
-
-| # | Deliverable | Location | Status |
-|---|-------------|----------|--------|
-| 1 | Obsidian Vault | `AI_Employee_Vault/` | ✅ Complete |
-| 2 | Dashboard.md | `AI_Employee_Vault/Dashboard.md` | ✅ Complete |
-| 3 | Company Handbook | `AI_Employee_Vault/Company_Handbook.md` | ✅ Complete |
-| 4 | Business Goals | `AI_Employee_Vault/Business_Goals.md` | ✅ Complete |
-| 5 | Gmail Watcher | `src/watchers/gmail_watcher.py` | ✅ Complete |
-| 6 | Filesystem Watcher | `src/watchers/filesystem_watcher.py` | ✅ Complete |
-| 7 | Base Watcher | `src/watchers/base_watcher.py` | ✅ Complete |
-| 8 | Agent Skills (5) | `src/skills/` | ✅ Complete |
-| 9 | Orchestrator | `src/orchestration/orchestrator.py` | ✅ Complete |
-| 10 | Test Suite | `tests/test_ai_employee.py` | ✅ Complete |
-| 11 | Specifications | `SPECIFICATIONS.md` | ✅ Complete |
-| 12 | Documentation | `README.md` | ✅ Complete |
-
-### Folder Structure Verification
+### Step 1: Edit .env File
 
 ```bash
-AI_Employee_Vault/
-├── Inbox/                 ✅
-├── Needs_Action/          ✅
-├── Plans/                 ✅
-├── Done/                  ✅
-├── Pending_Approval/      ✅
-├── Approved/              ✅
-├── Rejected/              ✅
-├── Logs/                  ✅
-├── Briefings/             ✅
-├── Accounting/            ✅
-├── Dashboard.md           ✅
-├── Company_Handbook.md    ✅
-└── Business_Goals.md      ✅
+# Open .env in your editor
+notepad .env          # Windows
+nano .env             # macOS/Linux
+code .env             # VS Code
+```
+
+### Required Credentials
+
+#### LinkedIn Session Token
+
+**Get it automatically (recommended):**
+```bash
+python src/skills/linkedin_session_auth.py login
+```
+This opens a browser, you login manually, and saves the session.
+
+**Get it manually:**
+1. Login to LinkedIn in Chrome
+2. Press F12 (DevTools)
+3. Go to **Application** → **Cookies** → `https://www.linkedin.com`
+4. Find cookie named `li_at`
+5. Copy its value
+6. Paste into `.env`:
+```env
+LINKEDIN_SESSION_TOKEN=paste_your_li_at_cookie_here
+```
+
+#### Gmail OAuth Credentials
+
+1. **Create Google Cloud Project:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Click "Create Project" → Name: "AI Employee"
+
+2. **Enable Gmail API:**
+   - APIs & Services → Enable APIs and Services
+   - Search "Gmail API" → Enable
+
+3. **Create OAuth Credentials:**
+   - Credentials → Create Credentials → OAuth client ID
+   - Application type: "Desktop app"
+   - Download JSON file
+
+4. **Add to .env:**
+```env
+GMAIL_CLIENT_ID=123456.apps.googleusercontent.com
+GMAIL_CLIENT_SECRET=ABCDEF-xyz123
+GMAIL_PROJECT_ID=my-project-12345
+```
+
+### Step 2: Verify Configuration
+
+```bash
+python src/config_loader.py
+```
+
+**Expected output:**
+```
+✓ Loaded environment from: D:\Hackathon-0\ai-employee\.env
+✅ All configuration valid!
+📁 Vault path: D:\Hackathon-0\AI_Employee_Vault
+🔧 Debug mode: False
+⏱️  Cycle interval: 30s
 ```
 
 ---
 
-## Project Structure
+## 🚀 Usage
+
+### Start the Orchestrator
+
+```bash
+cd D:\Hackathon-0\ai-employee
+python src/orchestration/orchestrator.py
+```
+
+**What it does:**
+- Monitors folders every 30 seconds
+- Processes approved LinkedIn posts
+- Updates dashboard
+- Logs all activities
+
+**Stop with:** `Ctrl+C`
+
+### Create LinkedIn Post
+
+#### Step 1: Create Post File
+
+Create file: `D:\Hackathon-0\AI_Employee_Vault\Pending_Approval\LINKEDIN_test_post.md`
+
+```markdown
+---
+type: linkedin_post
+post_type: thought_leadership
+category: social_media
+status: awaiting_approval
+created: 2026-04-01T10:00:00
+---
+
+## Post Content
+
+🚀 Just built an AI automation system!
+
+Key takeaways:
+✅ Start small
+✅ Iterate quickly
+✅ Monitor everything
+
+#AI #Automation #Innovation
+```
+
+#### Step 2: Approve Post
+
+Move file to Approved folder:
+```bash
+move D:\Hackathon-0\AI_Employee_Vault\Pending_Approval\LINKEDIN_test_post.md D:\Hackathon-0\AI_Employee_Vault\Approved\
+```
+
+#### Step 3: Watch It Post
+
+Within 30 seconds, orchestrator will:
+1. Detect file in `Approved/`
+2. Launch browser
+3. Login to LinkedIn
+4. Create post
+5. Publish content
+6. Move file to `Done/`
+
+---
+
+## 📚 Commands Reference
+
+### LinkedIn Session Management
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `python src/skills/linkedin_session_auth.py login` | Authenticate with LinkedIn | First-time setup or session expired |
+| `python src/skills/linkedin_session_auth.py test` | Verify session is valid | Troubleshooting login issues |
+| `python src/skills/linkedin_session_auth.py status` | Show session details | Check session age and validity |
+| `python src/skills/linkedin_session_auth.py logout` | Clear saved session | Security or switching accounts |
+
+### Manual Testing
+
+```bash
+# Test post to LinkedIn (bypasses approval)
+python src/skills/linkedin_browser_post.py --content "Test post from AI Employee!"
+
+# Test with file
+python src/skills/linkedin_browser_post.py --file path/to/post.md
+
+# Test connection only
+python src/skills/linkedin_browser_post.py --test
+```
+
+### Configuration Management
+
+```bash
+# Validate configuration
+python src/config_loader.py
+
+# Run setup script
+python setup.py
+```
+
+### File Operations
+
+```bash
+# View pending posts
+dir ..\AI_Employee_Vault\Pending_Approval\
+
+# Approve post
+move ..\AI_Employee_Vault\Pending_Approval\LINKEDIN_xxx.md ..\AI_Employee_Vault\Approved\
+
+# Retry failed post
+move ..\AI_Employee_Vault\Failed\LINKEDIN_xxx.md ..\AI_Employee_Vault\Approved\
+
+# View dashboard
+type ..\AI_Employee_Vault\Dashboard.md
+```
+
+### View Logs
+
+```bash
+# Orchestrator log
+type logs\orchestrator.log
+
+# Last 50 lines
+Get-Content logs\orchestrator.log -Tail 50
+
+# LinkedIn posting log
+type logs\linkedin_browser_post.log
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 ai-employee/
+│
+├── .env                            # ⚠️  SECRETS (gitignored)
+├── .env.example                    # Template for .env (safe to commit)
+├── .gitignore                      # Git exclusions
+├── README.md                       # This file
+├── requirements.txt                # Python dependencies
+├── setup.py                        # First-time setup script
+│
 ├── src/
-│   ├── watchers/
-│   │   ├── __init__.py
-│   │   ├── base_watcher.py       # Abstract base class
-│   │   ├── gmail_watcher.py      # Gmail monitoring
-│   │   └── filesystem_watcher.py # File drop monitoring
-│   ├── skills/
-│   │   ├── __init__.py
-│   │   ├── process_email.py      # Email processing skill
-│   │   ├── update_dashboard.py   # Dashboard update skill
-│   │   ├── log_action.py         # Audit logging skill
-│   │   ├── create_approval_request.py  # Approval requests
-│   │   └── move_to_done.py       # Archive completed items
-│   └── orchestration/
-│       ├── __init__.py
-│       └── orchestrator.py       # Main orchestrator
-├── tests/
-│   ├── __init__.py
-│   └── test_ai_employee.py       # Test suite
-├── configs/
-├── docs/
-├── AI_Employee_Vault/            # Obsidian vault
-│   ├── Inbox/
-│   ├── Needs_Action/
-│   ├── Plans/
-│   ├── Done/
-│   ├── Pending_Approval/
-│   ├── Approved/
-│   ├── Rejected/
-│   ├── Logs/
-│   ├── Briefings/
-│   ├── Accounting/
-│   ├── Dashboard.md
-│   ├── Company_Handbook.md
-│   └── Business_Goals.md
-├── .env.example                  # Environment template
-├── .gitignore
-├── requirements.txt              # Python dependencies
-├── pytest.ini                    # Pytest configuration
-├── start.bat                     # Windows quick start
-├── SPECIFICATIONS.md             # Technical specifications
-└── README.md                     # This file
+│   ├── config_loader.py            # Load .env variables (CRITICAL)
+│   │
+│   ├── orchestration/
+│   │   └── orchestrator.py         # Main loop (monitors folders)
+│   │
+│   └── skills/
+│       ├── linkedin_session_auth.py    # LinkedIn login
+│       ├── linkedin_browser_post.py    # Post to LinkedIn
+│       ├── linkedin_mcp_server.py      # MCP integration
+│       └── gmail_reader.py             # Gmail processing
+│
+├── config/                         # ⚠️  Credentials (gitignored)
+│   ├── linkedin_session.json       # LinkedIn cookies
+│   ├── gmail_credentials.json      # Gmail OAuth
+│   └── token.json                  # Gmail token
+│
+└── logs/                           # Logs (gitignored)
+    ├── orchestrator.log            # Main log
+    └── linkedin_browser_post.log   # LinkedIn log
+
+../AI_Employee_Vault/               # Task management (outside project)
+├── Needs_Action/                   # Incoming tasks
+├── Plans/                          # Planned tasks
+├── Pending_Approval/               # Posts awaiting approval
+├── Approved/                       # Ready to publish
+├── Done/                           # Published posts
+├── Failed/                         # Failed posts (retry)
+├── Rejected/                       # Rejected content
+└── Dashboard.md                    # Real-time stats
 ```
 
 ---
 
-## Testing
+## 🔐 Security
 
-### Run All Tests
+### Credential Protection
+
+**Never commit these files:**
+
+| File | Contains | Protection |
+|------|----------|------------|
+| `.env` | All secrets | In `.gitignore` |
+| `config/linkedin_session.json` | LinkedIn cookies | In `.gitignore` |
+| `config/gmail_credentials.json` | Gmail OAuth | In `.gitignore` |
+| `config/token.json` | Gmail token | In `.gitignore` |
+| `logs/*.log` | May contain sensitive data | In `.gitignore` |
+
+**Safe to commit:**
+
+| File | Purpose |
+|------|---------|
+| `.env.example` | Template (no secrets) |
+| `src/*.py` | Source code |
+| `requirements.txt` | Dependencies |
+| `README.md` | Documentation |
+
+### How Credentials Are Protected
+
+1. **Environment Variables (`.env` file)**
+   - Not tracked by git (`.gitignore`)
+   - Read by `python-dotenv`
+   - Never hardcoded in code
+
+2. **Gitignore Rules**
+   ```gitignore
+   .env                    # Blocked
+   config/*.json          # Blocked
+   logs/*.log             # Blocked
+   ```
+
+3. **Config Loader**
+   ```python
+   from src.config_loader import Config
+   
+   # Reads from .env automatically
+   token = Config.LINKEDIN_SESSION_TOKEN
+   ```
+
+### Before GitHub Upload
 
 ```bash
-pytest tests/ -v
+# Verify no secrets in git
+git status
+
+# Should NOT see:
+# - .env
+# - config/*.json
+# - logs/*.log
+
+# Should see:
+# - .env.example
+# - src/*.py
+# - README.md
+
+# Safe to push
+git add .
+git commit -m "Initial commit"
+git push origin main
 ```
-
-### Run Specific Test Class
-
-```bash
-pytest tests/test_ai_employee.py::TestFilesystemWatcher -v
-```
-
-### Run with Coverage
-
-```bash
-pytest tests/ -v --cov=src --cov-report=html
-```
-
-### Test Categories
-
-| Category | Command | Description |
-|----------|---------|-------------|
-| Unit Tests | `pytest tests/ -m unit` | Test individual components |
-| Integration | `pytest tests/ -m integration` | Test component interaction |
-| All Tests | `pytest tests/ -v` | Run complete test suite |
 
 ---
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
-### Common Issues
+### LinkedIn Session Expired
 
-#### Python Not Found
-
-```bash
-# Check Python installation
-python --version
-
-# If not found, install from https://python.org
-# Ensure "Add to PATH" is checked during installation
+**Symptom:**
+```
+Session expired or invalid
 ```
 
-#### Module Not Found
-
+**Solution:**
 ```bash
-# Reinstall dependencies
-pip install -r requirements.txt --force-reinstall
+# Clear old session
+python src/skills/linkedin_session_auth.py logout
+
+# Re-authenticate
+python src/skills/linkedin_session_auth.py login
 ```
 
-#### Vault Not Found
+**Why it happens:** LinkedIn sessions expire after ~30-90 days.
 
-```bash
-# Verify vault path in .env
-# Check that AI_Employee_Vault folder exists
-dir D:\Hackathon-0\AI_Employee_Vault
+---
+
+### Configuration Errors
+
+**Symptom:**
+```
+❌ LINKEDIN_SESSION_TOKEN not set in .env
 ```
 
-#### Watcher Not Detecting Files
-
+**Solution:**
 ```bash
-# Check if folder exists
-dir AI_Employee_Vault\Inbox
+# Check .env file exists
+dir .env
 
-# Verify file age (files must be > 5 seconds old)
-# Check orchestrator logs in AI_Employee_Vault/Logs/
+# Verify contents
+type .env
+
+# Run validation
+python src/config_loader.py
 ```
 
-### Logs
+---
 
-Logs are stored in:
-- Orchestrator: `AI_Employee_Vault/Logs/orchestrator_YYYY-MM-DD.log`
-- Audit: `AI_Employee_Vault/Logs/YYYY-MM-DD.json`
+### Post Not Publishing
 
-### Getting Help
+**Check 1: Session valid?**
+```bash
+python src/skills/linkedin_session_auth.py test
+```
 
-1. Check logs in `AI_Employee_Vault/Logs/`
-2. Run with `--dry-run` for safe testing
-3. Review `SPECIFICATIONS.md` for detailed requirements
-4. Run test suite to verify installation
+**Check 2: File in Approved?**
+```bash
+dir ..\AI_Employee_Vault\Approved\
+```
+
+**Check 3: Orchestrator running?**
+Should see output every 30 seconds.
+
+**Check 4: Check logs**
+```bash
+type logs\linkedin_browser_post.log
+```
 
 ---
 
-## Next Steps
+### Browser Not Opening
 
-### Silver Tier Upgrades
+**Symptom:**
+```
+Browser not found
+```
 
-After completing Bronze Tier, consider adding:
-
-1. **Gmail Integration** - Enable `ENABLE_GMAIL_WATCHER=true`
-2. **MCP Servers** - Add email sending capabilities
-3. **Scheduled Operations** - Add cron/Task Scheduler integration
-4. **WhatsApp Watcher** - Monitor WhatsApp Web
-5. **Enhanced Approval Workflow** - Add email/SMS notifications
-
-### Learning Resources
-
-- [Qwen Code Documentation](https://agentfactory.panaversity.org/docs/AI-Tool-Landscape/claude-code-features-and-workflows)
-- [Obsidian Help](https://help.obsidian.md/)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
-- [Python Watchdog Docs](https://python-watchdog.readthedocs.io/)
+**Solution:**
+```bash
+# Reinstall Playwright browsers
+playwright install chromium
+```
 
 ---
 
-## Security Notes
+### Gmail Authentication Error
 
-⚠️ **Important Security Practices:**
+**Symptom:**
+```
+OAuth error: invalid_grant
+```
 
-1. **Never commit `.env`** - Contains sensitive configuration
-2. **Never commit credentials** - Keep `credentials.json` out of version control
-3. **Review approval requests** - Always verify before approving actions
-4. **Monitor logs** - Check `AI_Employee_Vault/Logs/` regularly
-5. **Use dry-run mode** - Test new configurations with `DRY_RUN=true`
+**Solution:**
+```bash
+# Delete old token
+del config\token.json
 
----
-
-## License
-
-This project is part of the Personal AI Employee Hackathon 0.
-
----
-
-## Credits
-
-Built for the Personal AI Employee Hackathon 0: Building Autonomous FTEs in 2026
-
-**Tech Stack:**
-- Qwen Code - AI Reasoning Engine
-- Obsidian - Knowledge Base
-- Python - Implementation Language
-- Model Context Protocol - External Integrations
+# Restart orchestrator (will re-authenticate)
+python src/orchestration/orchestrator.py
+```
 
 ---
 
-*AI Employee v1.0.0 (Bronze Tier) - Built with Qwen Code*
+## 🤝 Contributing
+
+Contributions welcome!
+
+1. Fork repository
+2. Create feature branch: `git checkout -b feature/amazing`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push branch: `git push origin feature/amazing`
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+MIT License - See LICENSE file
+
+---
+
+## 🙏 Acknowledgments
+
+- [Playwright](https://playwright.dev/) - Browser automation
+- [Google APIs](https://developers.google.com/) - Gmail integration
+- [Python](https://python.org/) - Programming language
+
+---
+
+## 📞 Support
+
+**Issues?** Check:
+1. Troubleshooting section above
+2. Log files in `logs/`
+3. Dashboard at `AI_Employee_Vault/Dashboard.md`
+4. GitHub Issues
+
+---
+
+**Made with ❤️ for secure automation**

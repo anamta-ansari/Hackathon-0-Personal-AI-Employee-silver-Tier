@@ -669,6 +669,95 @@ Log entry format:
 | **Playwright error** | `playwright install chromium` |
 | **Vault not found** | Check `VAULT_PATH` in `.env` |
 
+### LinkedIn Automation Troubleshooting
+
+#### "Session expired or invalid" Error
+
+**Symptom:** Logs show `Session expired or invalid` or posts fail with browser automation errors.
+
+**Solution:**
+```bash
+cd D:\Hackathon-0\ai-employee
+
+# Step 1: Clear expired session
+python src/skills/linkedin_session_auth.py logout
+
+# Step 2: Re-authenticate (browser will open)
+python src/skills/linkedin_session_auth.py login
+
+# Step 3: Verify session
+python src/skills/linkedin_session_auth.py status
+```
+
+**Why it happens:** LinkedIn sessions expire after ~30-90 days, or if you change password, clear cookies, or LinkedIn detects automation.
+
+#### "Page.goto: Timeout 60000ms exceeded" Error
+
+**Symptom:** Browser opens but navigation to LinkedIn times out.
+
+**Solutions:**
+1. **Check internet connection** - Slow/intermittent connection causes timeouts
+2. **Close other browser instances** - Multiple Chrome instances can conflict
+3. **Increase timeout** - Edit `linkedin_mcp_server.py`, change timeout from 60000 to 120000
+4. **Disable VPN/proxy** - These can interfere with Playwright
+
+```bash
+# Test LinkedIn manually to verify connectivity
+python src/skills/linkedin_browser_post.py --test
+```
+
+#### "Could not enter post content" Error
+
+**Symptom:** Browser navigates successfully but fails when typing post content.
+
+**Causes & Solutions:**
+1. **LinkedIn UI changed** - Selectors may need updating
+2. **Cookie consent popup** - Manually dismiss any cookie banners
+3. **Account restriction** - Check if LinkedIn limited your account
+
+**Debug steps:**
+```bash
+# Run in non-headless mode to see what's happening
+python src/skills/linkedin_browser_post.py \
+  --content "Test post" \
+  --no-headless
+```
+
+#### "Not logged in" Error (MCP Server)
+
+**Symptom:** MCP server reports not logged in even with valid session.
+
+**Solution:**
+```bash
+# Restart MCP server with fresh session
+# Kill existing server process first
+taskkill /F /IM node.exe  # Windows
+
+# Then restart orchestrator
+python src/orchestration/orchestrator.py
+```
+
+### Gmail Automation Troubleshooting
+
+#### "403 Forbidden" or "Invalid Credentials"
+
+**Solution:**
+```bash
+# Re-authenticate Gmail
+python src/skills/gmail-auth.py auth
+
+# Or refresh existing tokens
+python src/skills/gmail-auth.py refresh
+```
+
+#### "Gmail API not enabled"
+
+**Solution:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your project
+3. Enable Gmail API
+4. Download fresh `credentials.json`
+
 ### Getting Help
 
 1. Check logs in `AI_Employee_Vault/Logs/`

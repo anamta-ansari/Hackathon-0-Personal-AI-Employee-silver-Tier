@@ -50,6 +50,15 @@ except ImportError:
     PYPERCLIP_AVAILABLE = False
     logger.debug("pyperclip not available - clipboard paste method disabled")
 
+# Import config loader for environment variables
+try:
+    from ..config_loader import Config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.debug("Config loader not available - using file-based config")
+
 # Import session auth
 try:
     from .linkedin_session_auth import LinkedInSessionAuth
@@ -69,28 +78,32 @@ class LinkedInBrowserPoster:
     LinkedIn Browser-Based Poster
 
     Posts to LinkedIn using browser automation with saved session.
+    Supports both .env environment variables and file-based sessions.
     """
 
-    def __init__(self, config_dir: Optional[str] = None, dry_run: bool = False, headless: bool = False):
+    def __init__(self, config_dir: Optional[str] = None, dry_run: bool = False, headless: bool = None):
         """
         Initialize LinkedIn Browser Poster
 
         Args:
             config_dir: Path to config directory
             dry_run: If True, log actions without posting
-            headless: If True, run browser without UI (default: False for visibility)
+            headless: If True, run browser without UI (default: from .env or False)
         """
         # Resolve paths
         self.project_root = Path(__file__).parent.parent.parent
         self.config_dir = Path(config_dir) if config_dir else self.project_root / 'config'
         self.vault_path = self.project_root / 'AI_Employee_Vault'
 
+        # Use .env settings if available
+        self.dry_run = dry_run
+        self.headless = headless if headless is not None else (Config.BROWSER_HEADLESS if CONFIG_AVAILABLE else False)
+        self.timeout = Config.BROWSER_TIMEOUT if CONFIG_AVAILABLE else 90000
+
         # Initialize session auth
         self.session_auth = LinkedInSessionAuth(config_dir=str(self.config_dir))
 
         # State
-        self.dry_run = dry_run
-        self.headless = headless  # Control browser visibility
         self.playwright = None
         self.browser: Optional[Browser] = None
         self.context: Optional[BrowserContext] = None
@@ -103,7 +116,8 @@ class LinkedInBrowserPoster:
         logger.info(f"LinkedInBrowserPoster initialized")
         logger.info(f"Config directory: {self.config_dir}")
         logger.info(f"Dry run: {dry_run}")
-        logger.info(f"Headless mode: {headless}")
+        logger.info(f"Headless mode: {self.headless}")
+        logger.info(f"Browser timeout: {self.timeout}ms")
 
     def _apply_stealth(self, page: Page) -> None:
         """Apply stealth mode to avoid bot detection"""
