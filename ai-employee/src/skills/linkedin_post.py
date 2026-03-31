@@ -418,36 +418,45 @@ status: published
         self,
         business_goals_path: Optional[str] = None,
         dashboard_path: Optional[str] = None,
-        post_type: str = 'weekly_update'
+        post_type: str = 'weekly_update',
+        company_handbook_path: Optional[str] = None
     ) -> str:
         """
         Generate a business post from vault data
-        
+
         Args:
             business_goals_path: Path to Business_Goals.md
             dashboard_path: Path to Dashboard.md
             post_type: Type of post to generate
-            
+            company_handbook_path: Path to Company_Handbook.md (for tone/style)
+
         Returns:
             str: Generated post content
         """
         business_goals_path = Path(business_goals_path) if business_goals_path else self.vault_path / 'Business_Goals.md'
         dashboard_path = Path(dashboard_path) if dashboard_path else self.vault_path / 'Dashboard.md'
-        
+        company_handbook_path = Path(company_handbook_path) if company_handbook_path else self.vault_path / 'Company_Handbook.md'
+
         # Read business goals
         goals_content = ""
         if business_goals_path.exists():
             goals_content = business_goals_path.read_text(encoding='utf-8')
-        
+
         # Read dashboard
         dashboard_content = ""
         if dashboard_path.exists():
             dashboard_content = dashboard_path.read_text(encoding='utf-8')
-        
+
+        # Read company handbook for tone/style
+        handbook_content = ""
+        if company_handbook_path.exists():
+            handbook_content = company_handbook_path.read_text(encoding='utf-8')
+
         # Extract key information
         highlights = self._extract_highlights(dashboard_content)
         goals = self._extract_goals(goals_content)
-        
+        tone = self._extract_tone(handbook_content)
+
         # Generate post based on type
         if post_type == 'weekly_update':
             template_vars = {
@@ -468,13 +477,47 @@ status: published
                 'content': 'Sharing some thoughts on recent industry developments.',
                 'insight': 'Adaptation and innovation are key to success'
             }
+        elif post_type == 'product_launch':
+            template_vars = {
+                'title': 'Exciting Product Update',
+                'content': 'We\'re launching something new!',
+                'benefit': 'This will help our clients achieve better results',
+                'link': '#LearnMore'
+            }
+        elif post_type == 'client_success':
+            template_vars = {
+                'title': 'Client Success Story',
+                'content': 'Helping our clients succeed is what drives us.',
+                'results': 'Measurable improvements achieved'
+            }
         else:
             template_vars = {
                 'title': 'Business Update',
                 'content': 'Sharing our latest progress and updates.'
             }
-        
+
+        # Add tone modifier if extracted
+        if tone:
+            template_vars['tone'] = tone
+
         return self.create_post(content="", post_type=post_type, template_vars=template_vars)
+
+    def _extract_tone(self, handbook_content: str) -> str:
+        """Extract tone/style guidance from company handbook"""
+        if not handbook_content:
+            return "professional"
+
+        # Look for tone indicators
+        handbook_lower = handbook_content.lower()
+
+        if any(word in handbook_lower for word in ['casual', 'friendly', 'informal']):
+            return "friendly and approachable"
+        elif any(word in handbook_lower for word in ['formal', 'professional', 'corporate']):
+            return "professional and polished"
+        elif any(word in handbook_lower for word in ['enthusiastic', 'energetic', 'exciting']):
+            return "enthusiastic and energetic"
+        else:
+            return "professional yet approachable"
     
     def _extract_highlights(self, dashboard_content: str) -> str:
         """Extract highlights from dashboard"""

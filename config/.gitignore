@@ -1,0 +1,7 @@
+# LinkedIn session data - NEVER commit these files!
+*.json
+!.gitignore
+
+# Session cookies contain authentication tokens
+# Local storage contains user data
+# These files should remain private

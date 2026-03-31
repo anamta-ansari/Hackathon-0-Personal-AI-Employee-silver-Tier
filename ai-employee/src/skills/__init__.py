@@ -12,11 +12,11 @@ Available Skills:
 - move_to_done: Archive completed items
 """
 
-from skills.process_email import process_email
-from skills.update_dashboard import update_dashboard
-from skills.log_action import log_action, LogEntry
-from skills.create_approval_request import create_approval_request
-from skills.move_to_done import move_to_done
+from .process_email import process_email
+from .update_dashboard import update_dashboard
+from .log_action import log_action, LogEntry
+from .create_approval_request import create_approval_request
+from .move_to_done import move_to_done
 
 __all__ = [
     'process_email',

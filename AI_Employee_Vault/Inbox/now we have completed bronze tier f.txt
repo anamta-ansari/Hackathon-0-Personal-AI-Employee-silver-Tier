@@ -1,0 +1,835 @@
+now we have completed bronze tier first you can review skills and the read this file "" after that you can create silver tier skills which we need in the silver tier 
+
+
+we have completed bronze tier  we use qwen code as the brain instead of claude now first you review this file "" and after that build silver tier make sure to focus on gmail and LinkedIn watcher complete it credentials of gmail already I have create file credentials.json in current directory
+
+create credentials.json
+the visit console.cloud.google.com
+
+Read the hackathon document "Personal AI Employee Hackathon 0_ Building Autonomous FTEs in 2026" completely.
+
+After reading, identify ALL agent skills required for Silver Tier completion.
+
+Then create those skills.
+
+IMPORTANT CONTEXT:
+- credentials.json file already exists in current directory (for Gmail OAuth)
+- PRIORITY FOCUS: Gmail watcher and LinkedIn posting skills
+- These two are critical for Silver Tier 
+REQUIREMENTS:
+1. Extract Silver Tier requirements from the document
+2. Identify which skills are needed (prioritize Gmail and LinkedIn)
+3. Create each skill as a separate .py file
+4. Use existing credentials.json for Gmail authentication
+5. Include all functions mentioned in the document
+6. Add error handling and logging
+7. Make them production-ready
+
+DELIVERABLES:
+- List of Silver Tier skills identified from document
+- Python files for each skill 
+- Ensure gmail_auth.py uses credentials.json from current directory
+- Ensure linkedin_post.py has complete posting workflow
+- Each file ready to use with orchestrator
+
+DO NOT modify existing Bronze skills or orchestrator yet.
+
+Show me what skills you identified and the code for each.
+
+
+
+
+
+
+=========================================
+ To Test Each Skill:
+
+      1 # Gmail Auth
+      2 python src/skills/gmail_auth.py auth
+      3
+      4 # Gmail Watcher
+      5 python src/skills/gmail_watcher_skill.py --once
+      6
+      7 # LinkedIn Post
+      8 python src/skills/linkedin_post.py --generate weekly_update
+      9
+     10 # WhatsApp Watcher
+     11 python src/skills/whatsapp_watcher.py --test
+     12
+     13 # Plan Generation
+     14 python src/skills/create_plan.py --process
+     15
+     16 # Approval Workflow
+     17 python src/skills/approval_workflow.py --status
+     18
+     19 # Email MCP Server
+     20 python src/skills/email_mcp_server.py --status
+     21
+     22 # Scheduler
+     23 python src/skills/scheduler.py --status
+
+
+
+
+
+
+
+
+
+================================================
+
+ CLI Commands:
+
+      1 # Check initialization
+      2 python src/skills/send_email.py status
+      3
+      4 # Send email (dry run)
+      5 python src/skills/send_email.py send --to "test@example.com" --subject "Test" --body "Hello" --dry-run
+      6
+      7 # Process approval queue
+      8 python src/skills/send_email.py process
+      9
+     10 # View statistics
+     11 python src/skills/send_email.py stats
+
+    Approval Workflow:
+     1. Create approval request → /Pending_Approval/EMAIL_APPROVAL_*.md
+     2. User moves file to /Approved/
+     3. Run process_approval_queue() to send
+     4. File moves to /Done/ after sending
+
+====================================================================
+  ✦ I should check if there's existing code in the ai-employee folder that handles OAuth authentication so I can provide
+     specific guidance on how to use new credentials.
+  ✦ Good news: You can fix this yourself! The credentials file is from project hackathon-489112. You have two options:
+
+    Option A: Add Your Email as Test User (Quickest)
+
+    If you have access to the Google Cloud Console for project hackathon-489112:
+
+     1. Go to Google Cloud Console (https://console.cloud.google.com/)
+     2. Select project hackathon-489112
+     3. Navigate to APIs & Services → OAuth consent screen
+     4. Scroll down to Test users section
+     5. Click Add users and add: anamtaanxarii@gmail.com
+     6. Save and try again
+
+    Option B: Create Your Own Project (Full Control)
+
+    If you don't have admin access to that project, create your own:
+
+    Step-by-Step Guide:
+
+     1. Create New Project
+        - Go to Google Cloud Console (https://console.cloud.google.com/)
+        - Click Select a project → New Project
+        - Name it (e.g., "AI-Employee-Dev")
+        - Click Create
+
+     2. Enable Gmail API
+        - Go to APIs & Services → Library
+        - Search for "Gmail API"
+        - Click Enable
+
+     3. Configure OAuth Consent Screen
+        - Go to APIs & Services → OAuth consent screen
+        - Choose External user type
+        - Fill in required fields:
+          - App name: AI Employee
+          - User support email: your email
+          - Developer contact: your email
+        - Click Save and Continue (skip scopes for now)
+        - Click Save and Continue (skip test users for now)
+
+     4. Create OAuth Credentials
+        - Go to APIs & Services → Credentials
+        - Click Create Credentials → OAuth client ID
+        - Application type: Desktop app
+        - Click Create
+        - Download the JSON file
+
+     5. Replace Your Credentials
+        - Replace D:\Hackathon-0\credentials.json with the downloaded file
+
+     6. Add Yourself as Test User
+        - Back to OAuth consent screen
+        - Under Test users, add: anamtaanxarii@gmail.com
+        - Click Save
+
+    Would you like me to create a setup script to help automate the OAuth flow once you have your new credentials?
+
+====================================================================================================
+LINKEDIN AUTOMATION - COMPLETE SILVER TIER IMPLEMENTATION
+
+OBJECTIVES:
+1. Create standalone LinkedIn authentication script (like gmail_auth.py)
+2. Read and understand LinkedIn Silver Tier requirements from hackathon document
+3. Implement all LinkedIn Silver Tier features
+4. Integrate with existing workflow without breaking Gmail automation
+5. Test complete LinkedIn automation pipeline
+
+═══════════════════════════════════════════════════════════════
+STEP 1: READ HACKATHON REQUIREMENTS DOCUMENT
+═══════════════════════════════════════════════════════════════
+
+TASK 1A: Locate and read the hackathon requirements document
+
+Search for file: "Personal AI Employee Hackathon 0_ Building Autonomous FTEs in 2026.md"
+
+TASK 1B: Extract LinkedIn Silver Tier requirements
+
+From the document, identify and extract:
+
+1. **LinkedIn Auto-Posting Requirements:**
+   - What should be posted automatically?
+   - How often should posts be published?
+   - What content sources to use?
+   - What approval workflow is needed?
+   - What scheduling is required?
+
+2. **Content Generation Requirements:**
+   - Where does content come from? (Business_Goals.md, Company_Handbook.md, etc.)
+   - What types of posts? (milestone, thought leadership, product launch, etc.)
+   - What tone/style is required?
+   - Hashtag requirements?
+   - Image/media requirements?
+
+3. **Approval Workflow Requirements:**
+   - When is approval needed?
+   - How to present post for approval?
+   - What information to show?
+   - How user approves/rejects?
+
+4. **Scheduling Requirements:**
+   - Specific days/times for posting?
+   - Frequency limits?
+   - Time zone considerations?
+
+5. **Integration Requirements:**
+   - How to integrate with existing email workflow?
+   - Should run independently or together?
+   - Dashboard requirements?
+   - Logging requirements?
+
+6. **Success Metrics:**
+   - What defines Silver Tier completion for LinkedIn?
+   - What must be demonstrated?
+   - What features are optional vs required?
+
+TASK 1C: Create requirements summary document
+
+Create file: D:\Hackathon-0\LINKEDIN_SILVER_TIER_REQUIREMENTS.md
+
+Content should include:
+- All extracted requirements from hackathon document
+- Checklist of features to implement
+- Priority order (must-have vs nice-to-have)
+- Technical specifications
+- Testing criteria
+
+Show me the complete requirements extracted from the document.
+
+
+═══════════════════════════════════════════════════════════════
+STEP 2: CREATE LINKEDIN AUTHENTICATION SCRIPT (LIKE GMAIL_AUTH.PY)
+═══════════════════════════════════════════════════════════════
+
+TASK 2A: Study existing gmail_auth.py structure
+
+Open and analyze: D:\Hackathon-0\ai-employee\src\skills\gmail_auth.py
+
+Understand:
+- How it handles authentication flow
+- How it stores credentials
+- How it provides reusable authentication
+- Command-line interface structure
+- Error handling approach
+
+TASK 2B: Create linkedin_auth.py with same pattern
+
+Create file: D:\Hackathon-0\ai-employee\src\skills\linkedin_auth.py
+
+Requirements for this file:
+
+1. COMMAND-LINE INTERFACE:
+   Should support commands like gmail_auth.py:
+   - python src/skills/linkedin_auth.py auth    # Authenticate and save credentials
+   - python src/skills/linkedin_auth.py test    # Test existing credentials
+   - python src/skills/linkedin_auth.py status  # Show authentication status
+
+2. AUTHENTICATION FLOW:
+   - Prompt user for LinkedIn email
+   - Prompt user for LinkedIn password (masked input)
+   - Test authentication with linkedin-api
+   - Save credentials securely to .env file
+   - Confirm successful authentication
+
+3. CREDENTIAL STORAGE:
+   - Update or create .env file
+   - Add LINKEDIN_EMAIL
+   - Add LINKEDIN_PASSWORD
+   - Preserve existing .env entries (Gmail, Vault path, etc.)
+   - Never log passwords in clear text
+
+4. TESTING CAPABILITY:
+   - Load credentials from .env
+   - Attempt authentication
+   - Report success or failure
+   - Show account email (masked password)
+
+5. STATUS CHECK:
+   - Check if credentials exist in .env
+   - Check if credentials are valid
+   - Display authentication status
+
+6. ERROR HANDLING:
+   - Handle missing credentials gracefully
+   - Handle authentication failures clearly
+   - Provide actionable error messages
+   - Handle network errors
+   - Handle 2FA issues with helpful guidance
+
+7. USER EXPERIENCE:
+   - Clear prompts and instructions
+   - Progress indicators
+   - Success/failure messages with colors if possible
+   - Helpful next steps after authentication
+
+IMPLEMENTATION STRUCTURE:
+```python
+#!/usr/bin/env python3
+"""
+LinkedIn Authentication Management
+
+Usage:
+    python src/skills/linkedin_auth.py auth     # Set up credentials
+    python src/skills/linkedin_auth.py test     # Test credentials
+    python src/skills/linkedin_auth.py status   # Check status
+"""
+
+import os
+import sys
+from pathlib import Path
+import getpass
+from dotenv import load_dotenv, set_key, find_dotenv
+from linkedin_api import Linkedin
+
+class LinkedInAuthManager:
+    def __init__(self):
+        # Initialize paths
+        # Load environment
+        # Set up logging
+        
+    def authenticate(self):
+        """Interactive authentication setup"""
+        # Prompt for email
+        # Prompt for password (masked)
+        # Test credentials
+        # Save to .env
+        # Confirm success
+        
+    def test_credentials(self):
+        """Test existing credentials"""
+        # Load from .env
+        # Attempt authentication
+        # Report result
+        
+    def check_status(self):
+        """Check authentication status"""
+        # Check .env file
+        # Check credentials validity
+        # Display status
+
+    def save_credentials(self, email, password):
+        """Save credentials to .env file"""
+        # Update .env preserving other values
+        
+def main():
+    # Parse command line arguments
+    # Route to appropriate method
+    # Handle errors gracefully
+
+if __name__ == "__main__":
+    main()
+```
+
+Create the complete, production-ready linkedin_auth.py file.
+
+TASK 2C: Create credentials testing script
+
+Also create: D:\Hackathon-0\ai-employee\test_linkedin_auth.py
+
+Simpler script for quick credential verification without full auth flow.
+
+
+═══════════════════════════════════════════════════════════════
+STEP 3: IMPLEMENT LINKEDIN SILVER TIER FEATURES
+═══════════════════════════════════════════════════════════════
+
+Based on requirements extracted in Step 1, implement all Silver Tier features:
+
+FEATURE 1: Content Generation from Business Goals
+
+Update or create methods in linkedin_post.py to:
+- Read Business_Goals.md from vault
+- Extract key themes, achievements, milestones
+- Generate relevant LinkedIn post content
+- Apply proper tone and style
+- Add relevant hashtags
+- Format for LinkedIn (character limits, line breaks)
+
+FEATURE 2: Multiple Post Types
+
+Ensure linkedin_post.py supports all required post types:
+- Milestone announcements
+- Product launches
+- Thought leadership
+- Company updates
+- Team highlights
+- Industry insights
+- (Any others from requirements document)
+
+FEATURE 3: Scheduling System
+
+Implement scheduled posting:
+- Configure posting schedule (e.g., Tuesday/Thursday 10 AM)
+- Check schedule in orchestrator main loop
+- Auto-generate posts at scheduled times
+- Queue posts for approval
+- Respect rate limits
+
+FEATURE 4: Approval Workflow Integration
+
+Ensure LinkedIn posts go through approval:
+- Create post file in Pending_Approval/
+- Include post preview, type, timing
+- Clear approval instructions
+- Move to Approved/ triggers publishing
+- Move to Rejected/ cancels post
+
+FEATURE 5: Dashboard Integration
+
+Update dashboard to show:
+- Total LinkedIn posts published
+- Posts this week/month
+- Next scheduled post time
+- Pending LinkedIn approvals
+- Success/failure rate
+
+FEATURE 6: Audit Logging
+
+Log all LinkedIn activity:
+- Post created
+- Post approved/rejected
+- Post published
+- Post ID and URL
+- Engagement metrics (if available)
+- Errors and failures
+
+Implement all features based on Silver Tier requirements.
+
+
+═══════════════════════════════════════════════════════════════
+STEP 4: INTEGRATE WITH ORCHESTRATOR (WITHOUT BREAKING EMAIL)
+═══════════════════════════════════════════════════════════════
+
+CRITICAL: Do not break existing email automation while adding LinkedIn.
+
+INTEGRATION APPROACH:
+
+1. MODULAR INITIALIZATION:
+   Initialize LinkedIn skill separately from email skills
+   If LinkedIn fails, email should continue working
+   Log initialization status for each skill
+
+2. INDEPENDENT PROCESSING:
+   Email processing in handle_approved_actions()
+   LinkedIn processing in handle_approved_actions()
+   Both should work independently
+   Both use same approval workflow pattern
+
+3. SCHEDULED POSTING:
+   Add LinkedIn schedule check in main loop
+   Should not interfere with email processing
+   Run on separate timing from email checks
+
+4. DASHBOARD UPDATES:
+   Show both email AND LinkedIn metrics
+   Separate sections for clarity
+   Update independently
+
+5. ERROR ISOLATION:
+   LinkedIn errors should not crash orchestrator
+   Email should continue if LinkedIn fails
+   Log errors clearly for debugging
+
+IMPLEMENTATION IN ORCHESTRATOR:
+
+In orchestrator.py main loop:
+while True:
+cycle_start = time.time()
+try:
+    # Process Needs_Action (email tasks)
+    self.process_needs_action()
+    
+    # Handle approved actions (email AND LinkedIn)
+    self.handle_approved_actions()
+    
+    # Check LinkedIn schedule (if enabled)
+    if self.linkedin_skill:
+        self.check_linkedin_schedule()
+    
+    # Handle rejected files
+    self.handle_rejected_approvals()
+    
+    # Update dashboard (email + LinkedIn metrics)
+    self.update_dashboard()
+    
+except Exception as e:
+    self.logger.error(f"Orchestrator cycle error: {e}")
+    # Continue running even if one cycle fails
+
+time.sleep(30)
+
+Ensure email automation keeps working exactly as before.
+
+
+═══════════════════════════════════════════════════════════════
+STEP 5: COMPLETE TESTING WORKFLOW
+═══════════════════════════════════════════════════════════════
+
+COMPREHENSIVE TESTING PROCEDURE:
+
+TEST 1: Authentication Setup
+Commands:
+python src/skills/linkedin_auth.py auth
+# Follow prompts to enter credentials
+
+python src/skills/linkedin_auth.py test
+# Verify credentials work
+
+python src/skills/linkedin_auth.py status
+# Check authentication status
+
+Expected: All commands work, credentials saved, authentication successful
+
+TEST 2: Content Generation
+Action: Run content generation independently
+Expected: Generate LinkedIn post from Business_Goals.md
+
+TEST 3: Manual Post Approval (Quick Test)
+Steps:
+1. Create test post in Pending_Approval/
+2. Start orchestrator
+3. Move to Approved/
+4. Verify post published to LinkedIn
+5. Check Dashboard updated
+6. Verify file in Done/
+
+TEST 4: Email + LinkedIn Together (Integration Test)
+Steps:
+1. Send test email to yourself
+2. Create test LinkedIn post
+3. Both should appear in Pending_Approval/
+4. Approve email
+5. Approve LinkedIn post
+6. Both should execute independently
+7. Dashboard shows both email AND LinkedIn metrics
+
+TEST 5: Scheduled Posting (If Implemented)
+Steps:
+1. Configure schedule
+2. Wait for scheduled time
+3. Verify post auto-generated
+4. Appears in Pending_Approval/
+5. Approve and publish
+
+TEST 6: Error Handling
+Tests:
+- Invalid credentials → Graceful error
+- Network failure → Retry or log error
+- LinkedIn API limit → Queue for later
+- Email still works if LinkedIn fails
+
+TEST 7: Complete Workflow Verification
+Checklist:
+□ Gmail authentication works
+□ LinkedIn authentication works
+□ Email detection working
+□ Email approval working
+□ Email sending working
+□ LinkedIn post creation working
+□ LinkedIn approval working
+□ LinkedIn publishing working
+□ Dashboard shows both systems
+□ Audit logs both systems
+□ No interference between systems
+
+
+═══════════════════════════════════════════════════════════════
+STEP 6: SILVER TIER COMPLETION VERIFICATION
+═══════════════════════════════════════════════════════════════
+
+Based on hackathon requirements, verify all Silver Tier LinkedIn features:
+
+REQUIRED FEATURES CHECKLIST:
+□ LinkedIn authentication working
+□ Auto-posting capability implemented
+□ Content generation from Business Goals
+□ Multiple post types supported
+□ Approval workflow integrated
+□ Scheduled posting (if required)
+□ Dashboard metrics displayed
+□ Audit logging complete
+□ Error handling robust
+□ Does not break email automation
+
+DEMONSTRATION REQUIREMENTS:
+□ Can authenticate LinkedIn
+□ Can generate LinkedIn post content
+□ Can approve LinkedIn post
+□ Post publishes to actual LinkedIn
+□ Dashboard shows LinkedIn activity
+□ Works alongside email automation
+□ Complete audit trail
+
+SUCCESS CRITERIA:
+All required features implemented
+All tests passing
+Live demonstration possible
+Production-ready code quality
+
+
+═══════════════════════════════════════════════════════════════
+DELIVERABLES
+═══════════════════════════════════════════════════════════════
+
+Provide complete documentation of:
+
+1. REQUIREMENTS SUMMARY
+   - Extracted from hackathon document
+   - Features implemented
+   - Features pending (if any)
+
+2. AUTHENTICATION SCRIPT
+   - linkedin_auth.py complete code
+   - Usage instructions
+   - Test results
+
+3. SILVER TIER IMPLEMENTATION
+   - All features implemented
+   - Code locations
+   - How each feature works
+
+4. INTEGRATION RESULTS
+   - Orchestrator updated
+   - Email still working
+   - LinkedIn working independently
+   - Both working together
+
+5. TEST RESULTS
+   - All test scenarios executed
+   - Pass/fail for each
+   - Screenshots or logs proving functionality
+
+6. USER GUIDE
+   - How to set up LinkedIn auth
+   - How to approve LinkedIn posts
+   - How to monitor activity
+   - How scheduled posting works (if implemented)
+
+7. SILVER TIER COMPLETION STATUS
+   - Requirements met: X/Y
+   - Demo-ready: Yes/No
+   - Known issues: List
+   - Next steps: List
+
+
+═══════════════════════════════════════════════════════════════
+EXECUTION ORDER
+═══════════════════════════════════════════════════════════════
+
+Execute in this order:
+
+1. Read hackathon requirements document
+2. Extract and document LinkedIn Silver Tier requirements
+3. Create linkedin_auth.py script
+4. Test authentication flow
+5. Implement all Silver Tier features based on requirements
+6. Integrate with orchestrator carefully
+7. Test email automation still works
+8. Test LinkedIn automation works
+9. Test both together
+10. Verify all Silver Tier requirements met
+11. Document everything
+
+Show me:
+- Requirements document analysis
+- Complete linkedin_auth.py code
+- All Silver Tier features implemented
+- Integration status
+- Complete test results
+- Silver Tier completion verification
+
+==================================================================
+PS D:\Hackathon-0\ai-employee> python src/skills/linkedin_auth.py auth
+
+============================================================
+
+LinkedIn Authentication Management
+
+============================================================
+
+2026-03-09 06:12:30,243 - __main__ - INFO - LinkedInAuthManager initialized
+
+2026-03-09 06:12:30,243 - __main__ - INFO - Vault path: D:\Hackathon-0\AI_Employee_Vault
+
+2026-03-09 06:12:30,244 - __main__ - INFO - Env file: D:\Hackathon-0\ai-employee\.env
+
+LinkedIn Authentication Setup
+
+----------------------------------------
+
+Enter your LinkedIn credentials:
+
+(Credentials will be saved to .env file)
+
+2026-03-09 06:12:30,245 - __main__ - INFO - LinkedIn credentials not found in .env file
+
+Enter LinkedIn email: anamtaanxarii@gmail.com
+
+Enter LinkedIn password:
+
+2026-03-09 06:12:56,459 - __main__ - INFO - Authenticating with LinkedIn: anamtaanxarii@gmail.com
+
+2026-03-09 06:13:03,484 - __main__ - ERROR - LinkedIn authentication failed: 'message'
+
+============================================================
+
+✗ AUTHENTICATION FAILED
+
+============================================================
+
+Possible reasons:
+
+  • Incorrect email or password
+
+  • LinkedIn security measures (try again later)
+
+  • Network connectivity issues
+
+  • Account restrictions
+
+Troubleshooting:
+
+  1. Verify your credentials are correct
+
+  2. Try logging into LinkedIn.com in a browser
+
+  3. Wait a few minutes and try again
+
+  4. Check if your account is in good standing
+
+PS D:\Hackathon-0\ai-employee>
+
+linkedin authentication failed as it is asking for email and password of likedin account to auhenticate i want that for linkedin aauthetication browser will open by running this command to login for linkedin and authentication of linkedin
+
+write a command for qwen to address this issue and solve it and also tell me how linkedin automation fully works based on project set up and also tell me commands for likedin automation to work including  purpose of each 
+
+command should have clear instruction , it should not have code
+========================================================================
+
+
+ ✅ LinkedIn MCP Server Installation Complete
+
+    I've completed the LinkedIn MCP server setup for your AI Employee project. Here's what was done:
+
+    ---
+
+    📦 What's Installed & Configured
+
+    The LinkedIn MCP server was already in your project! I've documented and verified it:
+
+
+    ┌──────────────┬──────────────┬─────────────────────────────────────────────┐
+    │ Component    │ Status       │ Location                                    │
+    ├──────────────┼──────────────┼─────────────────────────────────────────────┤
+    │ MCP Server   │ ✅ Installed │ ai-employee/src/skills/linkedin_mcp_server.py │
+    │ Post Skill   │ ✅ Installed │ ai-employee/src/skills/linkedin_post.py     │
+    │ Auth Manager │ ✅ Installed │ ai-employee/src/skills/linkedin_auth.py     │
+    │ MCP Config   │ ✅ Created   │ ai-employee/configs/mcp_config.json         │
+    │ Dependencies │ ✅ Installed │ linkedin-api, python-dotenv                 │
+    └──────────────┴──────────────┴─────────────────────────────────────────────┘
+
+    ---
+
+    📚 Documentation Created
+
+
+    ┌──────────────────────────────┬────────────────────────────────────────────┐
+    │ File                         │ Purpose                                    │
+    ├──────────────────────────────┼────────────────────────────────────────────┤
+    │ LINKEDIN_MCP_OPTIONS.md        │ Comparison of 3 LinkedIn MCP servers found │
+    │ LINKEDIN_MCP_INSTALL_GUIDE.md  │ Installation & configuration guide         │
+    │ LINKEDIN_MCP_COMPLETE_GUIDE.md │ Complete implementation guide              │
+    └──────────────────────────────┴────────────────────────────────────────────┘
+
+
+    ---
+
+    🚀 Next Step: Authenticate with LinkedIn
+
+    You need to enter your LinkedIn credentials (interactive step):
+
+     1 cd D:\Hackathon-0\ai-employee
+     2 python src/skills/linkedin_auth.py auth
+
+    You'll be prompted for:
+     - LinkedIn email address
+     - LinkedIn password
+
+    After authentication, test it:
+
+     1 python src/skills/linkedin_auth.py test
+
+    Then generate your first post:
+
+     1 python src/skills/linkedin_mcp_server.py --generate weekly_update
+
+    ---
+
+    📋 Available Commands
+
+      1 # Authentication
+      2 python src/skills/linkedin_auth.py auth       # Set up credentials
+      3 python src/skills/linkedin_auth.py test       # Test credentials
+      4 python src/skills/linkedin_auth.py status     # Check status
+      5
+      6 # MCP Server
+      7 python src/skills/linkedin_mcp_server.py --status              # Check status
+      8 python src/skills/linkedin_mcp_server.py --generate weekly_update  # Generate post
+      9 python src/skills/linkedin_mcp_server.py --check-pending       # Check pending
+     10 python src/skills/linkedin_mcp_server.py --check-approved      # Check approved
+     11 python src/skills/linkedin_mcp_server.py --process-approved    # Publish all
+
+    ---
+
+    🎯 What You Get
+
+    20+ LinkedIn tools:
+     - Create posts with approval workflow
+     - Generate posts from business data (Business_Goals.md, Dashboard.md)
+     - Schedule posts for optimal times
+     - Human-in-the-loop approval (posts don't publish without your review)
+     - Complete audit logging
+
+    5 post templates:
+     - 📊 Weekly Update
+     - 🎉 Milestone
+     - 🚀 Product Launch
+     - 💡 Thought Leadership
+     - ⭐ Client Success
+
+    ---
+
+    Ready to authenticate? Run the auth command above and enter your LinkedIn credentials.

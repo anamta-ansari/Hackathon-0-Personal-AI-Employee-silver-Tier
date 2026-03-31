@@ -358,13 +358,13 @@ def create_approval_request(
         if file_path:
             # SINGLE FILE MODE: Update existing file and move
             return _update_existing_file(
-                file_path, vault, action_type, action_details, 
-                priority, expires_hours, result
+                file_path, vault, action_type, action_details,
+                priority, expires_hours, result, pending_dir  # Added pending_dir parameter
             )
         else:
             # LEGACY MODE: Create new approval file
             return _create_new_file(
-                vault, action_type, action_details, 
+                vault, action_type, action_details,
                 priority, expires_hours, result
             )
 
@@ -383,24 +383,25 @@ def _update_existing_file(
     action_details: Dict[str, Any],
     priority: str,
     expires_hours: int,
-    result: Dict[str, Any]
+    result: Dict[str, Any],
+    pending_dir: Path  # NEW: Pass pending_dir as parameter
 ) -> Dict[str, Any]:
     """Update existing file with approval section and move to Pending_Approval/."""
     src_path = Path(file_path)
-    
+
     if not src_path.exists():
         result['error'] = f"File not found: {file_path}"
         return result
 
     # Read current content
     content = src_path.read_text(encoding='utf-8')
-    
+
     # Parse existing frontmatter
     frontmatter = read_frontmatter(content)
-    
+
     # Calculate expiration
     expires = datetime.now() + timedelta(hours=expires_hours)
-    
+
     # Update frontmatter
     frontmatter_updates = {
         'status': 'awaiting_approval',
@@ -409,38 +410,38 @@ def _update_existing_file(
         'action': action_type,
         'priority': priority
     }
-    
+
     # Add action details to frontmatter
     for key, value in action_details.items():
         frontmatter_updates[f'detail_{key}'] = value
-    
+
     content = update_frontmatter(content, frontmatter_updates)
-    
+
     # Add approval section
     content = add_approval_section(content, action_type, action_details, priority)
-    
+
     # Write updated content
     src_path.write_text(content, encoding='utf-8')
-    
+
     # Determine source directory to move from
     plans_dir = vault / 'Plans'
     needs_action_dir = vault / 'Needs_Action'
-    
+
     if src_path.parent == plans_dir:
         result['previous_location'] = 'Plans/'
     elif src_path.parent == needs_action_dir:
         result['previous_location'] = 'Needs_Action/'
     else:
         result['previous_location'] = str(src_path.parent)
-    
-    # Move to Pending_Approval/
+
+    # Move to Pending_Approval/ (using passed pending_dir parameter)
     new_path = move_file(src_path, pending_dir)
-    
+
     result['success'] = True
     result['file_path'] = str(new_path)
-    
+
     print(f"INFO: Updated and moved file to Pending_Approval/: {new_path.name}")
-    
+
     return result
 
 

@@ -19,7 +19,7 @@ Behavior:
 
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 
 
@@ -263,13 +263,100 @@ def get_active_projects(vault_path: Path) -> List[Dict[str, str]]:
     return projects
 
 
+def get_linkedin_metrics(vault_path: Path, config_dir: Optional[Path] = None) -> Dict[str, Any]:
+    """
+    Get LinkedIn activity metrics.
+
+    Args:
+        vault_path: Path to vault root
+        config_dir: Path to config directory (for session info)
+
+    Returns:
+        Dict: LinkedIn metrics
+    """
+    metrics = {
+        'total_posts': 0,
+        'pending': 0,
+        'approved': 0,
+        'done': 0,
+        'rejected': 0,
+        'latest_post': None,
+        'latest_post_time': None,
+        'posts_this_week': 0,
+        'posts_this_month': 0,
+        'session_status': 'Not authenticated',
+        'session_age_days': None,
+    }
+
+    # Count LinkedIn posts in each folder
+    done_dir = vault_path / 'Done'
+    pending_approval = vault_path / 'Pending_Approval'
+    approved_dir = vault_path / 'Approved'
+    rejected_dir = vault_path / 'Rejected'
+
+    if done_dir.exists():
+        linkedin_done = [f for f in done_dir.iterdir() if f.is_file() and f.name.startswith('LINKEDIN_')]
+        metrics['done'] = len(linkedin_done)
+        metrics['total_posts'] = len(linkedin_done)
+
+        # Find latest post
+        if linkedin_done:
+            latest = max(linkedin_done, key=lambda f: f.stat().st_mtime)
+            metrics['latest_post'] = latest.stem
+            latest_time = datetime.fromtimestamp(latest.stat().st_mtime)
+            metrics['latest_post_time'] = latest_time
+
+            # Posts this week
+            week_ago = datetime.now() - timedelta(days=7)
+            metrics['posts_this_week'] = sum(1 for f in linkedin_done if datetime.fromtimestamp(f.stat().st_mtime) > week_ago)
+
+            # Posts this month
+            month_ago = datetime.now() - timedelta(days=30)
+            metrics['posts_this_month'] = sum(1 for f in linkedin_done if datetime.fromtimestamp(f.stat().st_mtime) > month_ago)
+
+    if pending_approval.exists():
+        metrics['pending'] = len([f for f in pending_approval.iterdir() if f.is_file() and f.name.startswith('LINKEDIN_')])
+
+    if approved_dir.exists():
+        metrics['approved'] = len([f for f in approved_dir.iterdir() if f.is_file() and f.name.startswith('LINKEDIN_')])
+
+    if rejected_dir.exists():
+        metrics['rejected'] = len([f for f in rejected_dir.iterdir() if f.is_file() and f.name.startswith('LINKEDIN_')])
+
+    # Check session status
+    if config_dir is None:
+        # Try multiple possible config locations - check for actual session file
+        possible_config_dirs = [
+            Path(__file__).parent.parent / 'config',  # D:\Hackathon-0\ai-employee\config (most likely)
+            vault_path.parent / 'config',  # D:\Hackathon-0\config
+            vault_path.parent.parent / 'config',  # D:\Hackathon-0\config (if vault is nested)
+        ]
+        for config in possible_config_dirs:
+            if config.exists() and (config / 'linkedin_session.json').exists():
+                config_dir = config
+                break
+    
+    session_file = config_dir / 'linkedin_session.json' if config_dir else None
+    
+    if session_file and session_file.exists():
+        try:
+            mtime = datetime.fromtimestamp(session_file.stat().st_mtime)
+            age = datetime.now() - mtime
+            metrics['session_status'] = 'Active'
+            metrics['session_age_days'] = age.days
+        except:
+            pass
+
+    return metrics
+
+
 def update_dashboard(vault_path: str) -> Dict[str, Any]:
     """
     Update Dashboard.md with current vault state.
-    
+
     Args:
         vault_path: Path to Obsidian vault root
-        
+
     Returns:
         Dict: Update results including counts and status
     """
@@ -279,19 +366,21 @@ def update_dashboard(vault_path: str) -> Dict[str, Any]:
         'counts': {},
         'error': None
     }
-    
+
     try:
         vault = Path(vault_path)
-        dashboard_file = vault / 'Dashboard.md'
-        
+
+        # Determine config directory path
+        config_dir = vault.parent / 'config'
+
         # Count files in each folder
         counts = {
             'pending_items': count_files_in_folder(vault / 'Needs_Action'),
             'pending_approval': count_files_in_folder(vault / 'Pending_Approval'),
-            'completed_today': 0,  # Would need to check Done folder timestamps
+            'completed_today': 0,
             'processing_errors': 0
         }
-        
+
         # Check for errors in today's logs
         today = datetime.now().strftime('%Y-%m-%d')
         log_file = vault / 'Logs' / f"{today}.json"
@@ -304,35 +393,56 @@ def update_dashboard(vault_path: str) -> Dict[str, Any]:
                 counts['completed_today'] = sum(1 for l in logs if 'done' in l.get('action_type', '').lower())
             except:
                 pass
-        
+
         result['counts'] = counts
-        
+
         # Get system health
         health = get_system_health(vault)
-        
+
         # Get recent activity
         activity = get_recent_activity(vault)
-        
+
         # Get alerts
         alerts = get_alerts(vault)
-        
+
         # Get active projects
         projects = get_active_projects(vault)
-        
+
+        # Get LinkedIn metrics
+        linkedin_metrics = get_linkedin_metrics(vault, config_dir)
+
         # Build dashboard content
         projects_table = "| Project | Status | Due Date | Budget |\n"
         projects_table += "|---------|--------|----------|--------|\n"
         for project in projects:
             projects_table += f"| {project['name']} | {project['status']} | {project['due_date']} | {project['budget']} |\n"
-        
+
         activity_text = '\n'.join(activity)
         alerts_text = '\n'.join(alerts)
-        
+
         health_table = "| Component | Status | Last Check |\n"
         health_table += "|-----------|--------|------------|\n"
         for component, info in health.items():
             health_table += f"| {component} | {info['status']} | {info['last_check']} |\n"
-        
+
+        # LinkedIn section
+        session_status_emoji = '✅' if linkedin_metrics['session_status'] == 'Active' else '❌'
+        session_info = f"{session_status_emoji} {linkedin_metrics['session_status']}"
+        if linkedin_metrics['session_age_days'] is not None:
+            session_info += f" ({linkedin_metrics['session_age_days']} days old)"
+
+        latest_post_info = linkedin_metrics['latest_post'] if linkedin_metrics['latest_post'] else 'None yet'
+        if linkedin_metrics['latest_post_time']:
+            time_ago = datetime.now() - linkedin_metrics['latest_post_time']
+            if time_ago.days > 0:
+                latest_post_info += f" ({time_ago.days}d ago)"
+            elif time_ago.seconds >= 3600:
+                latest_post_info += f" ({time_ago.seconds // 3600}h ago)"
+            elif time_ago.seconds >= 60:
+                latest_post_info += f" ({time_ago.seconds // 60}m ago)"
+            else:
+                latest_post_info += " (just now)"
+
         dashboard_content = f"""# Dashboard
 
 **Last Updated:** {datetime.now().isoformat()}
@@ -349,6 +459,21 @@ def update_dashboard(vault_path: str) -> Dict[str, Any]:
 | Pending Approval | {counts['pending_approval']} |
 | Completed Today | {counts['completed_today']} |
 | Processing Errors | {counts['processing_errors']} |
+
+---
+
+## 📱 LinkedIn Activity
+
+| Metric | Value |
+|--------|-------|
+| **Total Posts Published** | {linkedin_metrics['total_posts']} |
+| **Pending Approval** | {linkedin_metrics['pending']} |
+| **Awaiting Publishing** | {linkedin_metrics['approved']} |
+| **Rejected Posts** | {linkedin_metrics['rejected']} |
+| **Latest Post** | {latest_post_info} |
+| **Posts This Week** | {linkedin_metrics['posts_this_week']} |
+| **Posts This Month** | {linkedin_metrics['posts_this_month']} |
+| **Session Status** | {session_info} |
 
 ---
 
@@ -392,17 +517,18 @@ Manual edits will be preserved but may be overwritten during the next update cyc
 
 ---
 
-*Generated by AI Employee v1.0.0 (Bronze Tier)*
+*Generated by AI Employee v1.0.0 (Silver Tier - LinkedIn Enabled)*
 """
-        
+
         # Write dashboard file
+        dashboard_file = vault / 'Dashboard.md'
         dashboard_file.write_text(dashboard_content, encoding='utf-8')
-        
+
         result['success'] = True
-        
+
     except Exception as e:
         result['error'] = str(e)
-    
+
     return result
 
 

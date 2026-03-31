@@ -1,5 +1,5 @@
 # AI Employee - Python Dependencies
-# Bronze Tier Requirements
+# Silver Tier Requirements
 
 # Core dependencies
 watchdog>=4.0.0          # File system monitoring
@@ -8,6 +8,12 @@ watchdog>=4.0.0          # File system monitoring
 google-api-python-client>=2.0.0
 google-auth-httplib2>=0.2.0
 google-auth-oauthlib>=1.0.0
+
+# LinkedIn API (for LinkedIn posting - Silver Tier)
+linkedin-api>=2.0.3
+
+# Playwright (for WhatsApp Web watcher - Silver Tier)
+playwright>=1.40.0
 
 # Testing
 pytest>=8.0.0

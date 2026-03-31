@@ -66,11 +66,71 @@ class GmailWatcherSkill:
         'invoice', 'payment', 'overdue', 'billing',
         'contract', 'legal', 'deadline'
     ]
-    
+
     MEDIUM_PRIORITY_KEYWORDS = [
         'meeting', 'schedule', 'calendar', 'appointment',
         'question', 'help', 'support', 'issue',
         'update', 'review', 'feedback'
+    ]
+
+    # System/bounce email patterns to filter out
+    SYSTEM_SENDER_PATTERNS = [
+        # Bounce/Non-delivery notifications
+        r'mailer-daemon@',
+        r'postmaster@',
+        r'daemon@',
+        r'bounce@',
+        r'no-reply@',
+        r'noreply@',
+        r'do-not-reply@',
+        r'donotreply@',
+        
+        # Google system emails
+        r'googlemail\.com',
+        r'notifications\.google\.com',
+        r'accounts\.google\.com',
+        
+        # Common system addresses
+        r'automated@',
+        r'automation@',
+        r'system@',
+        r'admin@',
+        r'administrator@',
+        r'webmaster@',
+        r'hostmaster@',
+        r'abuse@',
+        r'security@',
+        r'privacy@',
+        
+        # Social media notifications
+        r'notification@.*\.com',
+        r'notifications@.*\.com',
+        r'updates@.*\.com',
+        r'alerts@.*\.com',
+        
+        # Marketing/Automated
+        r'marketing@',
+        r'newsletter@',
+        r'promo@',
+        r'offers@',
+    ]
+
+    # Specific bounce subject patterns
+    BOUNCE_SUBJECT_PATTERNS = [
+        r'undeliverable',
+        r'delivery failed',
+        r'mail delivery failed',
+        r'returned mail',
+        r'undelivered mail',
+        r'delivery status notification',
+        r'non-delivery report',
+        r'bounce notification',
+        r'message could not be delivered',
+        r'address not found',
+        r'user unknown',
+        r'mailbox not found',
+        r'invalid recipient',
+        r'delivery error',
     ]
     
     def __init__(
@@ -186,8 +246,49 @@ class GmailWatcherSkill:
             messages = results.get('messages', [])
             logger.info(f"Found {len(messages)} email(s) matching query")
 
-            if messages:
-                for msg in messages[:3]:  # Show first 3
+            if not messages:
+                return []
+
+            # Filter out system/bounce emails and already processed messages
+            new_messages = []
+            filtered_count = 0
+
+            for message in messages:
+                msg_id = message['id']
+
+                # Skip if already processed
+                if msg_id in self.processed_ids:
+                    continue
+
+                # Fetch message headers to check sender
+                msg_data = self.service.users().messages().get(
+                    userId='me',
+                    id=msg_id,
+                    format='metadata',
+                    metadataHeaders=['From', 'Subject']
+                ).execute()
+
+                headers = {h['name']: h['value'] for h in msg_data['payload']['headers']}
+                from_email = headers.get('From', '')
+                subject = headers.get('Subject', '')
+
+                # Check if this is a system/bounce email
+                if self._is_system_email(from_email, subject):
+                    filtered_count += 1
+                    logger.info(f"Filtered out system email: {from_email} - {subject[:50]}")
+                    # Mark as processed to avoid re-checking
+                    self.processed_ids.add(msg_id)
+                    continue
+
+                # Add to new messages
+                new_messages.append(message)
+                self.processed_ids.add(msg_id)
+
+            logger.info(f"Filtered {filtered_count} system email(s), {len(new_messages)} new message(s) to process")
+
+            # Log first few messages
+            if new_messages:
+                for msg in new_messages[:3]:  # Show first 3
                     msg_data = self.service.users().messages().get(
                         userId='me',
                         id=msg['id'],
@@ -196,19 +297,6 @@ class GmailWatcherSkill:
                     ).execute()
                     headers = {h['name']: h['value'] for h in msg_data['payload']['headers']}
                     logger.info(f"  - From: {headers.get('From', 'Unknown')}, Subject: {headers.get('Subject', 'No subject')}")
-
-            if not messages:
-                return []
-
-            # Filter out already processed messages
-            new_messages = []
-            for message in messages:
-                msg_id = message['id']
-                if msg_id not in self.processed_ids:
-                    new_messages.append(message)
-                    self.processed_ids.add(msg_id)
-
-            logger.info(f"Found {len(new_messages)} new message(s)")
 
             # Save processed IDs to cache
             self._save_processed_ids()
@@ -222,6 +310,34 @@ class GmailWatcherSkill:
                 logger.warning("Authentication error, attempting to reinitialize")
                 self.initialize()
             return []
+
+    def _is_system_email(self, from_email: str, subject: str = '') -> bool:
+        """
+        Check if an email is from a system/bounce sender
+
+        Args:
+            from_email: Sender email address
+            subject: Email subject line
+
+        Returns:
+            bool: True if this is a system/bounce email that should be filtered
+        """
+        from_lower = from_email.lower()
+        subject_lower = subject.lower()
+
+        # Check sender patterns
+        for pattern in self.SYSTEM_SENDER_PATTERNS:
+            if re.search(pattern, from_lower, re.IGNORECASE):
+                logger.debug(f"Filtered by sender pattern '{pattern}': {from_email}")
+                return True
+
+        # Check bounce subject patterns
+        for pattern in self.BOUNCE_SUBJECT_PATTERNS:
+            if re.search(pattern, subject_lower, re.IGNORECASE):
+                logger.debug(f"Filtered by subject pattern '{pattern}': {subject[:50]}")
+                return True
+
+        return False
     
     def create_action_file(self, message: Dict[str, str]) -> Path:
         """
