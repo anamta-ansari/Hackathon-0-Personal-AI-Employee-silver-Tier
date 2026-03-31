@@ -223,7 +223,7 @@ class LinkedInSessionAuth:
             session_data = {
                 'cookies': cookies,
                 'saved_at': datetime.now().isoformat(),
-                'expires_at': (datetime.now() + timedelta(days=30)).isoformat(),  # 30 day expiry
+                'expires_at': (datetime.now() + timedelta(days=90)).isoformat(),  # 90 day expiry (was 30)
                 'user_agent': user_agent,
             }
 
