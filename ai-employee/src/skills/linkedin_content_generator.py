@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 """
 LinkedIn Content Generator - AI-Powered Post Creation
-
-Interactive tool for generating LinkedIn posts with multiple options.
+Generates unique, engaging LinkedIn posts with variety and randomization
 
 Usage:
     python src/skills/linkedin_content_generator.py
-    
+
 Interactive mode:
     - Shows post type options (1-8)
-    - Generates content based on selection
+    - Generates UNIQUE content each time
     - Shows preview
     - Saves to Pending_Approval/
     - Ready for approval
@@ -17,6 +16,7 @@ Interactive mode:
 
 import os
 import sys
+import random
 from pathlib import Path
 from datetime import datetime, timedelta
 import json
@@ -33,13 +33,19 @@ if sys.platform == 'win32':
 
 class LinkedInContentGenerator:
     """
-    AI-Powered LinkedIn Content Generator
+    AI-Powered LinkedIn Content Generator with Randomization
     
-    Generates professional LinkedIn posts based on business data and user selection.
+    Generates UNIQUE professional LinkedIn posts every time using:
+    - Randomized intros (5+ variations per type)
+    - Dynamic point elaborations
+    - Varied emoji selection
+    - Random hashtag pools
+    - Different conclusions
+    - Context-aware generation
     """
-    
+
     def __init__(self):
-        """Initialize content generator with vault paths"""
+        """Initialize content generator with vault paths and variety pools"""
         # Resolve paths
         self.project_root = Path(__file__).parent.parent.parent
         self.vault_path = self.project_root.parent / 'AI_Employee_Vault'
@@ -48,9 +54,121 @@ class LinkedInContentGenerator:
         self.company_handbook = self.vault_path / 'Company_Handbook.md'
         self.done_folder = self.vault_path / 'Done'
         self.logs_folder = self.vault_path / 'Logs'
-        
+
         # Ensure pending approval folder exists
         self.pending_approval.mkdir(parents=True, exist_ok=True)
+
+        # ═══════════════════════════════════════════════════════════════
+        # VARIETY POOLS - Randomization for unique content every time
+        # ═══════════════════════════════════════════════════════════════
+        
+        # Random intros for each post type
+        self.intros = {
+            'thought_leadership': [
+                "💡 After {timeframe} of {context}, here's what I've learned:",
+                "🧠 {number} insights from {context}:",
+                "💭 Reflecting on {context}, these lessons stand out:",
+                "🎯 What {timeframe} of {context} taught me:",
+                "✨ The {number} biggest lessons from {context}:",
+                "🔥 Hot take: {context} changed everything",
+                "📚 If I could go back, I'd tell myself this:",
+            ],
+            'milestone': [
+                "🎉 Excited to share: {achievement}!",
+                "🏆 Big news: We just {achievement}!",
+                "🚀 Milestone alert: {achievement}!",
+                "⭐ Thrilled to announce {achievement}!",
+                "🎊 Celebrating a major win: {achievement}!",
+                "💪 Hard work pays off: {achievement}!",
+                "🌟 Dream become reality: {achievement}!",
+            ],
+            'product_update': [
+                "📢 New feature alert: {feature}",
+                "🆕 Just launched: {feature}",
+                "⚡ Introducing {feature}",
+                "🎨 We built something cool: {feature}",
+                "🔥 Product update: {feature} is live!",
+                "✨ Game-changer: {feature}",
+                "🚀 Ship day! {feature}",
+            ],
+            'weekly_summary': [
+                "📊 Week {week_number} in review:",
+                "🗓️ What happened this week:",
+                "📝 Weekly highlights:",
+                "🎯 This week's progress:",
+                "⚡ Week {week_number} wrap-up:",
+                "🔥 This week was WILD:",
+                "💪 Crushed it this week:",
+            ],
+            'team_highlight': [
+                "👥 Team spotlight: {team_achievement}",
+                "🌟 Meet the minds behind {project}",
+                "🎉 Shoutout to the team for {team_achievement}",
+                "💪 Incredible work from the crew: {team_achievement}",
+                "🚀 Behind every great product: {team_achievement}",
+            ],
+            'celebration': [
+                "🎊 Time to celebrate: {celebration_reason}!",
+                "🥳 Cheers to {celebration_reason}!",
+                "🎉 Popping champagne: {celebration_reason}!",
+                "⭐ Special day: {celebration_reason}!",
+                "🌟 Grateful for: {celebration_reason}!",
+            ],
+            'industry_insight': [
+                "🔮 The future of {industry_topic}:",
+                "📈 Trending in {industry_topic}:",
+                "💡 Unpopular opinion about {industry_topic}:",
+                "🧠 Deep dive: {industry_topic}",
+                "⚡ Hot take: {industry_topic}",
+            ],
+        }
+        
+        # Random transitions
+        self.transitions = [
+            "Here's what stood out:",
+            "Key takeaways:",
+            "The highlights:",
+            "What matters most:",
+            "The essentials:",
+            "Breaking it down:",
+            "Let me explain:",
+            "Here's the thing:",
+        ]
+        
+        # Random conclusions
+        self.conclusions = [
+            "The {theme} isn't {wrong_way}.\nIt's {right_way}.",
+            "What's next? {next_step}.",
+            "Looking ahead: {future_vision}.",
+            "The journey continues: {next_action}.",
+            "{final_thought}\n\nWhat do you think?",
+            "Onwards! {motivation}",
+            "This is just the beginning. {motivation}",
+            "Your turn: {call_to_action}",
+        ]
+        
+        # Emoji pools for variety
+        self.emojis = {
+            'success': ['🎉', '🚀', '⭐', '🏆', '✨', '🎊', '🔥', '💪', '🌟', '👏'],
+            'thinking': ['💡', '🧠', '💭', '🤔', '💬', '🎯', '🔮', '📚', '🧐', '💭'],
+            'growth': ['📈', '📊', '⚡', '🌱', '📉', '💹', '🔼', '🔺', '📶', '💯'],
+            'numbers': ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'],
+            'tech': ['💻', '🤖', '⚙️', '🔧', '🛠️', '📱', '🖥️', '⌨️', '🖱️', '💾'],
+            'business': ['💼', '📋', '📁', '🗂️', '📌', '📎', '✒️', '🖊️', '📝', '📄'],
+            'people': ['👥', '👤', '👨‍💼', '👩‍💼', '🧑‍💻', '👨‍🔧', '👩‍🔧', '🤝', '🙌', '👋'],
+        }
+        
+        # Hashtag pools for randomization
+        self.hashtag_pools = {
+            'ai': ['#AI', '#ArtificialIntelligence', '#MachineLearning', '#DeepLearning', '#MLOps', '#AIAutomation', '#GenerativeAI', '#NeuralNetworks'],
+            'startup': ['#Startup', '#Entrepreneur', '#BuildInPublic', '#StartupLife', '#Founder', '#Innovation', '#VentureCapital', '#ScaleUp'],
+            'tech': ['#TechLeadership', '#SoftwareEngineering', '#DevLife', '#TechTrends', '#Engineering', '#CloudComputing', '#DevOps', '#SaaS'],
+            'productivity': ['#Productivity', '#Automation', '#WorkSmart', '#Efficiency', '#TimeManagement', '#LifeHacks', '#WorkflowOptimization'],
+            'leadership': ['#Leadership', '#Management', '#TeamWork', '#CompanyCulture', '#ThoughtLeadership', '#ExecutivePresence', '#StrategicThinking'],
+            'future': ['#FutureOfWork', '#DigitalTransformation', '#Industry40', '#TechTrends2026', '#Innovation', '#Disruption', '#NextGen'],
+            'general': ['#LinkedIn', '#Professional', '#CareerGrowth', '#Learning', '#Success', '#Motivation', '#Business', '#Networking'],
+            'celebration': ['#Milestone', '#Achievement', '#Winning', '#Grateful', '#TeamWork', '#Success', '#Celebration', '#Proud'],
+        }
         
         # Post type definitions
         self.post_types = {
@@ -96,190 +214,419 @@ class LinkedInContentGenerator:
             },
         }
 
-    def show_post_options(self):
-        """Display post type options to user"""
-        print("\n" + "=" * 60)
-        print("LinkedIn Post Generator")
-        print("=" * 60)
-        print("\nWhat type of LinkedIn post would you like to create?\n")
+    # ═══════════════════════════════════════════════════════════════
+    # HELPER FUNCTIONS FOR RANDOMIZATION
+    # ═══════════════════════════════════════════════════════════════
+
+    def _random_intro(self, post_type, **kwargs):
+        """Get randomized intro with filled variables"""
+        templates = self.intros.get(post_type, ["Here's my latest update:"])
+        template = random.choice(templates)
         
-        for key, value in self.post_types.items():
-            print(f"{key}. {value['name']}")
-            print(f"   {value['desc']}\n")
+        # Fill in variables with random choices
+        variables = {
+            'timeframe': random.choice(['6 months', '3 months', 'a year', '90 days', 'the past quarter', '8 weeks']),
+            'context': random.choice(['building our product', 'leading our team', 'growing our startup', 'this journey', 'working on automation', 'scaling our system']),
+            'number': random.choice(['3', '5', '4', 'Three', 'Five', 'Seven']),
+            'achievement': kwargs.get('achievement', 'a major milestone'),
+            'feature': kwargs.get('feature', 'our new feature'),
+            'week_number': datetime.now().isocalendar()[1],
+            'team_achievement': random.choice(['shipping v2.0', 'hitting our goals', 'the amazing launch', 'all the hard work']),
+            'celebration_reason': random.choice(['this milestone', 'our success', 'the journey so far', 'what we built together']),
+            'industry_topic': random.choice(['AI automation', 'the future of work', 'productivity tools', 'tech innovation']),
+        }
         
-        return self.post_types
+        try:
+            return template.format(**variables)
+        except KeyError:
+            return template
 
-    def get_user_selection(self):
-        """Get user's post type selection"""
-        while True:
-            choice = input("Enter your choice (1-8): ").strip()
-            if choice in self.post_types:
-                return choice
-            print("Invalid choice. Please enter 1-8.")
-
-    def generate_milestone_post(self):
-        """Generate milestone/achievement post"""
-        achievements = self._read_business_goals()
+    def _random_hashtags(self, categories, count=None):
+        """Generate random hashtags from categories"""
+        if count is None:
+            count = random.randint(4, 6)
         
-        content = f"""🎉 Exciting milestone achieved!
+        all_tags = []
+        
+        for category in categories:
+            if category in self.hashtag_pools:
+                all_tags.extend(self.hashtag_pools[category])
+        
+        # Add some general tags
+        all_tags.extend(self.hashtag_pools['general'])
+        
+        # Randomly select unique tags
+        selected = random.sample(all_tags, min(count, len(all_tags)))
+        
+        return ' '.join(selected)
 
-I'm thrilled to share that our AI Employee automation system has reached a major breakthrough.
+    def _random_emojis(self, category, count=1):
+        """Get random emojis from category"""
+        emojis = self.emojis.get(category, ['✨'])
+        return random.sample(emojis, min(count, len(emojis)))
 
-Recent accomplishments:
-✅ {achievements[0] if achievements else 'Automated email processing'}
-✅ {achievements[1] if len(achievements) > 1 else 'LinkedIn integration complete'}
-✅ {achievements[2] if len(achievements) > 2 else 'Dashboard monitoring live'}
+    def _elaborate_point(self, point):
+        """Add random elaboration to a point"""
+        elaborations = {
+            "Automation works best with human oversight": [
+                "Don't eliminate humans—augment them.",
+                "The goal isn't replacement, it's enhancement.",
+                "Humans + AI > AI alone.",
+                "Keep humans in the loop for quality.",
+            ],
+            "Start small, scale gradually": [
+                "We began with 1 post/day, now at 5/day.",
+                "Rome wasn't built in a day. Neither is a system.",
+                "Small wins compound into big results.",
+                "Crawl, walk, run—then fly.",
+            ],
+            "Monitor everything you build": [
+                "What gets measured gets improved.",
+                "Data > Intuition for optimization.",
+                "You can't fix what you can't see.",
+                "Dashboards are your best friend.",
+            ],
+            "Perfect is the enemy of shipped": [
+                "Better done than perfect.",
+                "Ship, learn, iterate. Repeat.",
+                "V1 is supposed to be embarrassing.",
+                "Done beats perfect every time.",
+            ],
+            "User feedback beats assumptions": [
+                "Build what they need, not what you think they need.",
+                "Talk to users early and often.",
+                "Assumptions are expensive. Validation is cheap.",
+                "Your users know better than you.",
+            ],
+        }
+        
+        if point in elaborations:
+            return random.choice(elaborations[point])
+        else:
+            return random.choice([
+                "This changed everything for us.",
+                "A hard-earned lesson.",
+                "Took time to learn this one.",
+                "Wish I knew this sooner.",
+                "Game-changer honestly.",
+            ])
 
-This wouldn't be possible without continuous innovation and testing.
+    # ═══════════════════════════════════════════════════════════════
+    # CONTENT GENERATORS - Each produces unique content every time
+    # ═══════════════════════════════════════════════════════════════
 
-What automation milestones are you celebrating this week?
-
-#AI #Automation #Milestone #Innovation #Productivity"""
+    def generate_thought_leadership_post(self):
+        """Generate UNIQUE thought leadership post with randomization"""
+        
+        # Random structure choices
+        num_points = random.randint(3, 5)
+        number_emojis = self._random_emojis('numbers', num_points)
+        
+        # Dynamic content - randomly select topics
+        topics_pool = [
+            "Automation works best with human oversight",
+            "Start small, scale gradually",
+            "Monitor everything you build",
+            "Perfect is the enemy of shipped",
+            "User feedback beats assumptions",
+            "Iterate faster than you think",
+            "Measure what matters, ignore the rest",
+            "Build for tomorrow, ship for today",
+            "Simplicity scales, complexity breaks",
+            "Document everything religiously",
+        ]
+        
+        selected_topics = random.sample(topics_pool, num_points)
+        
+        # Build content
+        intro = self._random_intro('thought_leadership')
+        transition = random.choice(self.transitions)
+        
+        points = []
+        for i, topic in enumerate(selected_topics):
+            emoji = number_emojis[i]
+            elaboration = self._elaborate_point(topic)
+            points.append(f"{emoji} {topic}\n   {elaboration}")
+        
+        # Random conclusion with filled variables
+        conclusions_filled = {
+            'theme': random.choice(['future', 'key', 'secret', 'truth', 'real lesson']),
+            'wrong_way': random.choice(['AI vs Humans', 'speed vs quality', 'big vs small', 'perfect vs done']),
+            'right_way': random.choice(['AI + Humans = Superhuman', 'speed AND quality', 'big AND small', 'done AND improved']),
+            'next_step': random.choice(['Keep building', 'Ship faster', 'Learn more', 'Stay curious']),
+            'future_vision': random.choice(['More automation', 'Better tools', 'Smarter systems', 'Human-AI partnership']),
+            'next_action': random.choice(['onward and upward', 'building every day', 'shipping weekly', 'learning constantly']),
+            'final_thought': random.choice(['Stay curious', 'Keep learning', 'Build in public', 'Share your journey', 'Question everything']),
+            'motivation': random.choice(['🚀', '💪', '⚡', '🔥', '🌟']),
+            'call_to_action': random.choice(["What's your take?", 'Agree or disagree?', 'Share your experience!', "Let's discuss!"]),
+        }
+        
+        conclusion_template = random.choice(self.conclusions)
+        conclusion = conclusion_template.format(**conclusions_filled)
+        
+        # Combine
+        content = f"{intro}\n\n{transition}\n\n"
+        content += "\n\n".join(points)
+        content += f"\n\n{conclusion}\n\n"
+        content += self._random_hashtags(['ai', 'startup', 'tech', 'leadership'], count=random.randint(4, 6))
         
         return content
 
-    def generate_thought_leadership_post(self):
-        """Generate thought leadership post"""
-        content = """💡 3 Lessons from Building an AI Employee
-
-After implementing autonomous AI systems, here's what I've learned:
-
-1️⃣ Human-in-the-loop is essential
-   Automation works best with human oversight, not replacement.
-
-2️⃣ Start small, scale gradually
-   Begin with one workflow, perfect it, then expand.
-
-3️⃣ Monitor everything
-   Dashboards and audit logs are non-negotiable for trust.
-
-The future isn't about AI replacing humans—it's about AI amplifying human potential.
-
-What's your experience with AI automation?
-
-#AI #Leadership #Automation #FutureOfWork #Productivity"""
+    def generate_milestone_post(self):
+        """Generate UNIQUE milestone post with randomization"""
+        
+        achievements_pool = [
+            "hit 10,000 users",
+            "reached $100K MRR",
+            "launched in 5 new markets",
+            "closed our Series A",
+            "hired our 20th employee",
+            "shipped 50 features this quarter",
+            "processed 1M+ API calls",
+            "achieved 99.9% uptime",
+            "expanded to 3 continents",
+            "partnered with industry leaders",
+        ]
+        
+        achievement = random.choice(achievements_pool)
+        intro = self._random_intro('milestone', achievement=achievement)
+        
+        gratitude_options = [
+            "Huge thanks to our amazing team who made this possible.",
+            "Couldn't have done it without our incredible community.",
+            "This is just the beginning. Onwards! 🚀",
+            "Grateful for everyone who believed in us.",
+            "To our supporters: you make this possible. Thank you! 🙏",
+            "None of this happens without our dedicated team. Love you all! ❤️",
+        ]
+        
+        gratitude = random.choice(gratitude_options)
+        
+        future_options = [
+            "What's next? Even bigger goals.",
+            "Now the real work begins.",
+            "Here's to the next milestone!",
+            "Excited for what's ahead.",
+            "Buckle up—it's going to get even better!",
+            "This is just chapter one.",
+        ]
+        
+        future = random.choice(future_options)
+        
+        success_emoji = self._random_emojis('success', 2)
+        
+        content = f"{success_emoji[0]} {intro}\n\n{gratitude}\n\n{future} {success_emoji[1]}\n\n"
+        content += self._random_hashtags(['startup', 'general', 'celebration'], count=random.randint(4, 5))
         
         return content
 
     def generate_product_update_post(self):
-        """Generate product update post"""
-        recent_tasks = self._get_recent_tasks()
-        task_count = len(recent_tasks)
+        """Generate UNIQUE product update post with randomization"""
         
-        content = f"""🚀 Product Update: New Features Live!
-
-Excited to announce the latest improvements to our AI Employee system:
-
-✨ What's New:
-- LinkedIn browser automation with session persistence
-- Real-time dashboard monitoring
-- Advanced approval workflows
-- Automated content generation
-
-📊 Impact:
-- {task_count} tasks automated recently
-- 80% reduction in manual posting time
-- Seamless email + social media integration
-
-The future of productivity is here. What features would you like to see next?
-
-#ProductUpdate #AI #Innovation #Automation #TechNews"""
+        features_pool = [
+            "AI-powered content generation",
+            "one-click LinkedIn automation",
+            "real-time analytics dashboard",
+            "smart scheduling assistant",
+            "team collaboration tools",
+            "automated approval workflows",
+            "multi-platform posting",
+            "custom branding options",
+        ]
         
-        return content
-
-    def generate_team_highlight_post(self):
-        """Generate team highlight post"""
-        content = """👥 Behind the Scenes: Building AI Employee
-
-Ever wonder what goes into building an autonomous AI system?
-
-Our team's approach:
-🔹 Daily standups to sync on automation workflows
-🔹 Continuous testing of new integration points
-🔹 Human-in-the-loop reviews for quality assurance
-🔹 Dashboard monitoring for real-time visibility
-
-The secret? Collaboration between human creativity and AI efficiency.
-
-What's your team's secret to productivity?
-
-#TeamWork #AI #Culture #Innovation #BehindTheScenes"""
+        feature = random.choice(features_pool)
+        intro = self._random_intro('product_update', feature=feature)
+        
+        benefits_pool = [
+            "⚡ 10x faster than manual posting",
+            "🎯 Boost engagement by 300%+",
+            "💰 Save 10 hours/week",
+            "📊 Track everything in real-time",
+            "🤖 AI does the heavy lifting",
+            "✨ Professional results every time",
+            "🔒 Enterprise-grade security",
+            "📱 Works on any device",
+        ]
+        
+        benefits = random.sample(benefits_pool, random.randint(3, 4))
+        
+        cta_options = [
+            "Try it free for 14 days →",
+            "Early access available now →",
+            "Join the waitlist →",
+            "Limited beta spots available →",
+            "Book a demo today →",
+            "See it in action →",
+        ]
+        
+        cta = random.choice(cta_options)
+        
+        content = f"{intro}\n\n"
+        content += "\n".join(benefits)
+        content += f"\n\n{cta}\n\n"
+        content += self._random_hashtags(['tech', 'startup', 'productivity', 'ai'], count=random.randint(4, 6))
         
         return content
 
     def generate_weekly_summary_post(self):
-        """Generate weekly summary post"""
-        stats = self._get_weekly_stats()
+        """Generate UNIQUE weekly summary post with randomization"""
         
-        content = f"""📊 Weekly Automation Update
+        intro = self._random_intro('weekly_summary')
+        
+        highlights_pool = [
+            "🚀 Shipped 3 major features",
+            "👥 Onboarded 500+ new users",
+            "📈 Revenue up 25% MoM",
+            "🎯 Hit our Q1 goals early",
+            "💻 Reduced bugs by 40%",
+            "⚡ 99.9% uptime maintained",
+            "🎨 Launched rebrand",
+            "📱 Mobile app beta live",
+            "🔧 Automated 80% of workflows",
+            "📊 Dashboard shows 3x growth",
+        ]
+        
+        highlights = random.sample(highlights_pool, random.randint(4, 6))
+        
+        next_week_options = [
+            "Next week: Even bigger launches 🔥",
+            "Coming soon: Major announcements 👀",
+            "Next week's focus: Scale, scale, scale 📈",
+            "Buckle up—next week is going to be wild 🚀",
+            "More updates coming your way soon ⚡",
+        ]
+        
+        next_week = random.choice(next_week_options)
+        
+        content = f"{intro}\n\n"
+        content += "\n".join(highlights)
+        content += f"\n\n{next_week}\n\n"
+        content += self._random_hashtags(['startup', 'general', 'productivity'], count=random.randint(4, 5))
+        
+        return content
 
-This week's AI Employee achievements:
-
-🎯 Productivity Stats:
-- Tasks Processed: {stats.get('tasks', 0)}
-- Emails Handled: {stats.get('emails', 0)}
-- LinkedIn Posts: {stats.get('linkedin', 0)}
-- Time Saved: ~{int(stats.get('time_saved', 0))} hours
-
-🚀 Key Wins:
-- All approvals reviewed within 24h
-- Zero missed notifications
-- 100% audit trail maintained
-
-Automation is transforming how we work. What's your biggest productivity win this week?
-
-#WeeklyUpdate #Productivity #AI #Automation #Results"""
+    def generate_team_highlight_post(self):
+        """Generate UNIQUE team highlight post with randomization"""
+        
+        intro = self._random_intro('team_highlight')
+        
+        team_aspects_pool = [
+            "Daily standups keep us aligned",
+            "Code reviews ensure quality",
+            "Pair programming solves tough problems",
+            "Retrospectives help us improve",
+            "Team lunches build culture",
+            "Hackathons spark innovation",
+            "Knowledge sharing sessions level everyone up",
+        ]
+        
+        aspects = random.sample(team_aspects_pool, random.randint(3, 4))
+        
+        appreciation_options = [
+            "Grateful to work with such talented humans! 🙏",
+            "This team makes the impossible possible. 💪",
+            "Couldn't ask for better collaborators. ❤️",
+            "Team makes the dream work! 🌟",
+        ]
+        
+        appreciation = random.choice(appreciation_options)
+        
+        content = f"{intro}\n\n"
+        content += "What makes our team special:\n\n"
+        content += "\n".join(aspects)
+        content += f"\n\n{appreciation}\n\n"
+        content += self._random_hashtags(['leadership', 'general', 'celebration'], count=random.randint(4, 5))
         
         return content
 
     def generate_celebration_post(self):
-        """Generate celebration post"""
-        content = """🎉 Celebrating a Special Milestone!
-
-Today marks an important achievement in our AI automation journey!
-
-What we're celebrating:
-✨ Another year of continuous innovation
-✨ Thousands of tasks automated
-✨ Countless hours of human potential unlocked
-✨ A community of forward-thinking professionals
-
-Grateful for everyone who's been part of this journey. Here's to amplifying human potential through AI!
-
-What milestones are you celebrating today?
-
-#Celebration #Milestone #AI #Gratitude #Innovation"""
+        """Generate UNIQUE celebration post with randomization"""
+        
+        intro = self._random_intro('celebration')
+        
+        celebration_reasons_pool = [
+            "another year of innovation",
+            "thousands of tasks automated",
+            "countless hours unlocked",
+            "our amazing community",
+            "the journey we've shared",
+            "what we've built together",
+        ]
+        
+        celebration_reason = random.choice(celebration_reasons_pool)
+        intro = intro.replace('{celebration_reason}', celebration_reason)
+        
+        reflection_options = [
+            "Looking back, I'm filled with gratitude for everyone who believed in this vision.",
+            "Every challenge taught us something. Every win motivated us further.",
+            "From day one to today—what a ride it's been!",
+            "Milestones like this remind us why we started.",
+        ]
+        
+        reflection = random.choice(reflection_options)
+        
+        future_options = [
+            "Here's to many more! 🥂",
+            "The best is yet to come. 🚀",
+            "Onward to the next chapter! 📖",
+            "Celebrating today, building tomorrow. 💪",
+        ]
+        
+        future = random.choice(future_options)
+        
+        celebration_emojis = self._random_emojis('success', 3)
+        
+        content = f"{celebration_emojis[0]} {intro}\n\n{reflection}\n\n{future} {celebration_emojis[1]} {celebration_emojis[2]}\n\n"
+        content += self._random_hashtags(['celebration', 'general', 'startup'], count=random.randint(4, 5))
         
         return content
 
     def generate_industry_insight_post(self):
-        """Generate industry insight post"""
-        content = """🔮 The Future of AI Automation in 2026
-
-3 trends I'm watching closely:
-
-1️⃣ Human-AI Collaboration
-   Moving beyond simple task automation to true partnership.
-   AI handles repetitive work, humans focus on strategy.
-
-2️⃣ Personal AI Employees
-   Every professional will have AI assistants managing their workflows.
-   Email, social media, scheduling—all automated with oversight.
-
-3️⃣ Trust Through Transparency
-   Audit logs, approval workflows, explainable AI.
-   The key is control, not black boxes.
-
-We're not replacing humans—we're amplifying their potential.
-
-What AI trends are you most excited about?
-
-#AI #FutureOfWork #Automation #Innovation #Technology"""
+        """Generate UNIQUE industry insight post with randomization"""
+        
+        intro = self._random_intro('industry_insight')
+        
+        topics_pool = [
+            ("Human-AI Collaboration", "Moving beyond simple task automation to true partnership."),
+            ("Personal AI Employees", "Every professional will have AI assistants managing workflows."),
+            ("Trust Through Transparency", "Audit logs and approval workflows are non-negotiable."),
+            ("The Death of Busywork", "Automation frees humans for strategic thinking."),
+            ("Rise of No-Code AI", "Soon everyone will build AI workflows without coding."),
+        ]
+        
+        topic, description = random.choice(topics_pool)
+        
+        elaboration_options = [
+            f"We're seeing this play out in real-time with {topic.lower()}.",
+            f"The data is clear: {topic.lower()} is transforming industries.",
+            f"Industry leaders are betting big on {topic.lower()}.",
+            f"Here's why {topic.lower()} matters more than you think:",
+        ]
+        
+        elaboration = random.choice(elaboration_options)
+        
+        prediction_options = [
+            "Mark my words: this will be mainstream within 2 years.",
+            "I predict every company will adopt this by 2027.",
+            "The organizations that embrace this will dominate their markets.",
+            "This isn't a question of if—it's a question of when.",
+        ]
+        
+        prediction = random.choice(prediction_options)
+        
+        content = f"{intro}\n\n"
+        content += f"**{topic}**\n\n"
+        content += f"{description}\n\n"
+        content += f"{elaboration}\n\n"
+        content += f"{prediction}\n\n"
+        content += f"What's your take on {topic.lower()}?\n\n"
+        content += self._random_hashtags(['ai', 'future', 'tech', 'leadership'], count=random.randint(4, 6))
         
         return content
 
     def generate_custom_post(self):
-        """Generate custom post based on user input"""
+        """Generate UNIQUE custom post from user input"""
+        
         print("\nDescribe what you'd like to post about:")
         print("(e.g., 'Our new dashboard feature', 'Tips for email automation')")
         
@@ -289,22 +636,65 @@ What AI trends are you most excited about?
             print("No topic provided. Generating thought leadership post instead.")
             return self.generate_thought_leadership_post()
         
-        content = f"""💭 Insights on {topic}
-
-[AI-generated content based on: {topic}]
-
-Key points:
-• Innovation in this area is accelerating
-• Best practices are still emerging
-• Early adopters are seeing significant benefits
-
-The future belongs to those who embrace automation while maintaining human oversight.
-
-What's your perspective on {topic}?
-
-#AI #Automation #Innovation #Productivity #{topic.replace(' ', '').replace('/', '')[:20]}"""
+        # Random intro styles
+        intro_styles = [
+            f"💭 Insights on {topic}",
+            f"🔥 Hot take: {topic}",
+            f"📚 Deep dive: {topic}",
+            f"💡 Thoughts on {topic}",
+            f"🎯 My perspective: {topic}",
+        ]
+        
+        intro = random.choice(intro_styles)
+        
+        # Random value-add content
+        value_adds = [
+            "Here's what I've learned after working with this extensively:",
+            "After implementing this in production, here are my findings:",
+            "The community keeps asking about this—so let me share:",
+            "This topic comes up constantly. Here's my two cents:",
+        ]
+        
+        value_add = random.choice(value_adds)
+        
+        # Random insights
+        insights_pool = [
+            "Innovation in this area is accelerating faster than expected",
+            "Best practices are still emerging—now is the time to experiment",
+            "Early adopters are seeing significant competitive advantages",
+            "The tools have finally caught up with the vision",
+            "What seemed impossible last year is now routine",
+        ]
+        
+        insights = random.sample(insights_pool, random.randint(2, 3))
+        
+        # Random conclusion
+        conclusions_pool = [
+            "The future belongs to those who embrace change while maintaining quality.",
+            "Stay curious, keep experimenting, and share what you learn!",
+            "This is just the beginning. Exciting times ahead!",
+            "Your turn: What's your experience with this?",
+        ]
+        
+        conclusion = random.choice(conclusions_pool)
+        
+        content = f"{intro}\n\n{value_add}\n\n"
+        content += "\n".join(f"• {insight}" for insight in insights)
+        content += f"\n\n{conclusion}\n\n"
+        
+        # Generate relevant hashtags from topic
+        topic_words = topic.lower().replace(',', '').replace('.', '').split()
+        custom_hashtags = [f"#{word[:15]}" for word in topic_words if len(word) > 3][:3]
+        
+        content += self._random_hashtags(['general'], count=3)
+        if custom_hashtags:
+            content += " " + " ".join(custom_hashtags)
         
         return content
+
+    # ═══════════════════════════════════════════════════════════════
+    # FILE SAVING & INTERACTIVE MODE
+    # ═══════════════════════════════════════════════════════════════
 
     def save_post_to_pending(self, content, post_type):
         """Save generated post to Pending_Approval folder"""
@@ -313,7 +703,7 @@ What's your perspective on {topic}?
         safe_type = re.sub(r'[^a-zA-Z0-9]', '_', post_type.lower())[:20]
         filename = f"LINKEDIN_{safe_type}_{timestamp}.md"
         filepath = self.pending_approval / filename
-        
+
         # Create frontmatter
         frontmatter = f"""---
 type: approval_request
@@ -322,7 +712,7 @@ post_type: {post_type}
 category: social_media
 status: awaiting_approval
 created: {datetime.now().isoformat()}
-generated_by: ai_content_generator
+generated_by: ai_content_generator_v2
 ---
 
 # LinkedIn Post Approval Request
@@ -342,100 +732,70 @@ Review the post content above.
 **✏️ To Edit:** Modify content above and then move to `/Approved/`
 
 ---
-*Generated by AI Employee - LinkedIn Content Generator*
+*Generated by AI Employee - LinkedIn Content Generator v2 (Unique Content Every Time)*
 """
-        
+
         # Save file
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(frontmatter)
-        
+
         return filepath
 
-    def _read_business_goals(self):
-        """Extract achievements from Business_Goals.md"""
-        if not self.business_goals.exists():
-            return ['Automated email processing', 'LinkedIn integration complete', 'Dashboard monitoring live']
-        
-        try:
-            with open(self.business_goals, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Extract bullet points or achievements
-            achievements = re.findall(r'^[-*]\s+(.+)$', content, re.MULTILINE)
-            return achievements[:5] if achievements else ['Business growth', 'Process optimization', 'Team expansion']
-        except Exception as e:
-            print(f"Warning: Could not read Business_Goals.md: {e}")
-            return ['Automated email processing', 'LinkedIn integration complete', 'Dashboard monitoring live']
+    def show_post_options(self):
+        """Display post type options to user"""
+        print("\n" + "=" * 70)
+        print("🎨 LINKEDIN CONTENT GENERATOR")
+        print("=" * 70)
+        print("\n✨ Each generation produces UNIQUE content—run multiple times for variety!\n")
+        print("Choose post type:\n")
 
-    def _get_recent_tasks(self):
-        """Get recent tasks from Done folder"""
-        if not self.done_folder.exists():
-            return []
-        
-        try:
-            tasks = list(self.done_folder.glob('*.md'))
-            return sorted(tasks, key=lambda x: x.stat().st_mtime, reverse=True)[:10]
-        except:
-            return []
+        for key, value in self.post_types.items():
+            print(f"{key}. {value['name']}")
+            print(f"   {value['desc']}\n")
 
-    def _get_weekly_stats(self):
-        """Calculate weekly statistics"""
-        if not self.done_folder.exists():
-            return {'tasks': 0, 'emails': 0, 'linkedin': 0, 'time_saved': 0}
-        
-        week_ago = datetime.now() - timedelta(days=7)
-        
-        # Count files from past week
-        done_files = list(self.done_folder.glob('*.md'))
-        weekly_files = [
-            f for f in done_files
-            if datetime.fromtimestamp(f.stat().st_mtime) > week_ago
-        ]
-        
-        # Categorize
-        emails = [f for f in weekly_files if 'EMAIL' in f.name.upper()]
-        linkedin = [f for f in weekly_files if 'LINKEDIN' in f.name.upper()]
-        tasks = [f for f in weekly_files if 'TASK' in f.name.upper() or 'ACTION' in f.name.upper()]
-        
-        return {
-            'tasks': len(tasks),
-            'emails': len(emails),
-            'linkedin': len(linkedin),
-            'time_saved': len(weekly_files) * 0.5  # Estimate 30 min per task
-        }
+        return self.post_types
+
+    def get_user_selection(self):
+        """Get user's post type selection"""
+        while True:
+            choice = input("Your choice (1-8): ").strip()
+            if choice in self.post_types:
+                return choice
+            print("Invalid choice. Please enter 1-8.")
 
     def run_interactive(self):
         """Run interactive post generation"""
         # Show options
         self.show_post_options()
-        
+
         # Get user selection
         choice = self.get_user_selection()
-        
+
         # Generate content based on selection
         post_info = self.post_types[choice]
         print(f"\n✨ Generating {post_info['name']}...\n")
-        
+
         content = post_info['generator']()
-        
+
         # Show preview
-        print("\n" + "=" * 60)
-        print("GENERATED POST PREVIEW")
-        print("=" * 60)
+        print("\n" + "=" * 70)
+        print("📝 GENERATED POST PREVIEW")
+        print("=" * 70)
         print(content)
-        print("=" * 60)
-        
+        print("=" * 70)
+
         # Confirm
         confirm = input("\n✅ Save this post to Pending_Approval? (y/n): ").strip().lower()
-        
+
         if confirm == 'y':
             filepath = self.save_post_to_pending(content, post_info['name'])
-            
+
             print(f"\n✅ Post saved to: {filepath.name}")
             print(f"\n📝 Next steps:")
             print(f"   1. Review: type \"{filepath}\"")
-            print(f"   2. Approve: move {filepath} AI_Employee_Vault\\Approved\\")
+            print(f"   2. Approve: move {filepath.name} AI_Employee_Vault\\Approved\\")
             print(f"   3. Watch automation publish it to LinkedIn!")
+            print(f"\n💡 Tip: Run again to generate a DIFFERENT version of this post type!")
             print()
         else:
             print("\n❌ Post discarded. Run again to generate a new one.")
@@ -443,10 +803,12 @@ Review the post content above.
 
 def main():
     """Main entry point for interactive post generation"""
-    print("\n" + "=" * 60)
-    print("AI Employee - LinkedIn Content Generator")
-    print("=" * 60)
-    
+    print("\n" + "=" * 70)
+    print("🤖 AI Employee - LinkedIn Content Generator v2")
+    print("=" * 70)
+    print("\n🎲 Randomization enabled: Every run produces UNIQUE content!")
+    print("=" * 70)
+
     generator = LinkedInContentGenerator()
     generator.run_interactive()
 
