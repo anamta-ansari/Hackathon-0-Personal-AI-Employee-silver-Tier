@@ -23,6 +23,7 @@ import json
 import logging
 import subprocess
 import re
+import asyncio
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List, Optional
@@ -677,6 +678,15 @@ Add processing notes here.
 
         approved_folder = self.vault_path / 'Approved'
 
+        # DEBUG: Show exactly what path we're checking
+        self.logger.info(f"[DEBUG] Vault path from config: {self.vault_path}")
+        self.logger.info(f"[DEBUG] Approved folder path: {approved_folder}")
+        self.logger.info(f"[DEBUG] Approved folder exists: {approved_folder.exists()}")
+        
+        if approved_folder.exists():
+            all_files = list(approved_folder.iterdir())
+            self.logger.info(f"[DEBUG] All files in Approved/: {[f.name for f in all_files]}")
+
         # Check if Approved folder exists
         if not approved_folder.exists():
             self.logger.info("Approved/ folder does not exist")
@@ -688,21 +698,36 @@ Add processing notes here.
         all_md_files = list(approved_folder.glob('*.md'))
         approved_files = []
 
+        self.logger.info(f"[DEBUG] Found {len(all_md_files)} .md files in Approved/ folder")
+
         for f in all_md_files:
             try:
                 content = f.read_text(encoding='utf-8')
-                
+                self.logger.info(f"[DEBUG] Checking file: {f.name}")
+                self.logger.info(f"[DEBUG] File size: {len(content)} chars")
+
                 # Check if it needs processing
+                has_type_approval = 'type: approval_request' in content
+                has_requires_approval = 'requires_approval: true' in content
+                has_action = 'action:' in content
+                
+                self.logger.info(f"[DEBUG]   type: approval_request = {has_type_approval}")
+                self.logger.info(f"[DEBUG]   requires_approval: true = {has_requires_approval}")
+                self.logger.info(f"[DEBUG]   action: = {has_action}")
+
                 is_approval = (
-                    'type: approval_request' in content or
-                    'requires_approval: true' in content or
-                    'action:' in content  # Files with action: field need processing
+                    has_type_approval or
+                    has_requires_approval or
+                    has_action
                 )
+                
                 if is_approval:
                     approved_files.append(f)
-                    self.logger.info(f"  Found approval file: {f.name}")
+                    self.logger.info(f"  ✓ Found approval file: {f.name}")
+                else:
+                    self.logger.warning(f"  ✗ File does not match approval criteria: {f.name}")
             except Exception as e:
-                self.logger.warning(f"  Could not read {f.name}: {e}")
+                self.logger.warning(f"  ✗ Could not read {f.name}: {e}")
 
         if not approved_files:
             self.logger.info("No approved actions to process")
@@ -1638,6 +1663,8 @@ AI Employee"""
     ) -> Dict[str, Any]:
         """
         Execute a LinkedIn post using browser automation (session-based).
+        
+        This method wraps the async version for compatibility with the sync orchestrator.
 
         Args:
             post_content: Post content
@@ -1672,7 +1699,10 @@ AI Employee"""
             # Initialize browser poster
             self.logger.info("[TOOL] Creating LinkedInBrowserPoster instance...")
             try:
-                poster = LinkedInBrowserPoster(dry_run=self.config.dry_run)
+                poster = LinkedInBrowserPoster(
+                    headless=False,  # Show browser so user can see it working
+                    dry_run=self.config.dry_run
+                )
                 self.logger.info("[OK] LinkedInBrowserPoster instance created")
             except Exception as e:
                 self.logger.error(f"[ERR] Failed to create LinkedInBrowserPoster: {e}")
@@ -1681,20 +1711,14 @@ AI Employee"""
                     'error': f'Failed to create LinkedInBrowserPoster: {e}'
                 }
 
-            # Post to LinkedIn
-            self.logger.info("[TOOL] Creating LinkedIn post...")
+            # Post to LinkedIn using async version
+            self.logger.info("[TOOL] Creating LinkedIn post (async)...")
             try:
-                if image_path:
-                    result = poster.create_post_with_image(
-                        content=post_content,
-                        image_path=image_path,
-                        title=post_title
-                    )
-                else:
-                    result = poster.create_post(
-                        content=post_content,
-                        title=post_title
-                    )
+                # Run the async method in a sync wrapper
+                result = asyncio.run(poster.create_post(
+                    content=post_content,
+                    post_type='general'
+                ))
                 self.logger.info(f"[OK] LinkedIn post creation returned: {result}")
             except Exception as e:
                 self.logger.error(f"[ERR] LinkedIn post creation failed: {e}")

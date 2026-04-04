@@ -780,6 +780,123 @@ class LinkedInSessionAuth:
             logger.debug(f"Could not write log: {e}")
 
 
+    def login_interactive(self):
+        """
+        Browser-based login with Chromium
+        Opens browser, user logs in manually, session is saved
+        """
+        
+        print("\n" + "="*70)
+        print("LINKEDIN BROWSER LOGIN")
+        print("="*70)
+        print()
+        print("This will open a Chromium browser for you to login to LinkedIn.")
+        print("After you login, the session will be saved automatically.")
+        print()
+        input("Press ENTER to open browser...")
+        
+        try:
+            from playwright.sync_api import sync_playwright
+            
+            print("\n🌐 Launching Chromium browser...")
+            
+            with sync_playwright() as p:
+                # Launch browser (NOT headless - user needs to see it)
+                browser = p.chromium.launch(
+                    headless=False,
+                    args=[
+                        '--start-maximized',
+                    ]
+                )
+                
+                print("✓ Browser launched")
+                
+                # Create context
+                context = browser.new_context(
+                    viewport={'width': 1920, 'height': 1080}
+                )
+                
+                # Create page
+                page = context.new_page()
+                
+                print("\n🔗 Navigating to LinkedIn login...")
+                
+                # Navigate to LinkedIn
+                page.goto('https://www.linkedin.com/login')
+                
+                print("\n" + "="*70)
+                print("📝 PLEASE LOGIN TO LINKEDIN IN THE BROWSER")
+                print("="*70)
+                print()
+                print("1. Enter your LinkedIn email/username")
+                print("2. Enter your password")
+                print("3. Complete any 2FA/verification if prompted")
+                print("4. Wait until you see the LinkedIn FEED")
+                print("5. Then come back here and press ENTER")
+                print()
+                
+                # Wait for user to login
+                input("⏳ After you're logged in and see your feed, press ENTER...")
+                
+                print("\n💾 Saving session...")
+                
+                # Get cookies
+                cookies = context.cookies()
+                
+                # Find li_at cookie (LinkedIn session cookie)
+                li_at_cookie = None
+                for cookie in cookies:
+                    if cookie['name'] == 'li_at':
+                        li_at_cookie = cookie
+                        break
+                
+                if not li_at_cookie:
+                    print("\n❌ ERROR: LinkedIn session cookie not found!")
+                    print("This means you might not be logged in properly.")
+                    print()
+                    print("Please try again and make sure you:")
+                    print("1. Successfully login to LinkedIn")
+                    print("2. See your LinkedIn feed before pressing ENTER")
+                    
+                    browser.close()
+                    return False
+                
+                # Create session data
+                session_data = {
+                    'cookies': cookies,
+                    'created_at': datetime.now().isoformat()
+                }
+                
+                # Save to file
+                self.config_dir.mkdir(parents=True, exist_ok=True)
+                
+                with open(self.session_file, 'w') as f:
+                    json.dump(session_data, f, indent=2)
+                
+                print(f"✓ Session saved to: {self.session_file}")
+                
+                # Close browser
+                browser.close()
+                
+                print("\n" + "="*70)
+                print("✅ LOGIN SUCCESSFUL!")
+                print("="*70)
+                print()
+                print(f"Session saved with {len(cookies)} cookies")
+                print(f"li_at cookie: {li_at_cookie['value'][:20]}...")
+                print()
+                print("You can now use the orchestrator to post to LinkedIn!")
+                print()
+                
+                return True
+                
+        except Exception as e:
+            print(f"\n❌ Error during login: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+
+
 # CLI interface
 if __name__ == '__main__':
     import argparse
@@ -838,7 +955,7 @@ Examples:
         print("LinkedIn Browser Login")
         print("-" * 40)
         print()
-        
+
         # Check dependencies
         if not PLAYWRIGHT_AVAILABLE:
             print("ERROR: Playwright not installed")
@@ -848,7 +965,7 @@ Examples:
             print("  python -m playwright install chromium")
             print()
             sys.exit(1)
-        
+
         # Check if session already exists
         if auth._session_exists():
             print("Existing session found!")
@@ -856,21 +973,10 @@ Examples:
             if response != 'y':
                 print("Login cancelled")
                 sys.exit(0)
-        
-        print("Instructions:")
-        print("  1. A browser window will open")
-        print("  2. Log into LinkedIn with your email/password")
-        print("  3. Complete any 2FA if enabled")
-        print("  4. Wait until you see your LinkedIn feed")
-        print("  5. Browser will close automatically")
-        print("  6. Session will be saved")
-        print()
-        input("Press Enter to continue...")
-        print()
-        
-        # Perform authentication
-        success = auth.authenticate(headless=args.headless)
-        
+
+        # Use the new interactive login method
+        success = auth.login_interactive()
+
         if not success:
             print()
             print("=" * 60)
@@ -878,7 +984,7 @@ Examples:
             print("=" * 60)
             print()
             print("Possible reasons:")
-            print("  • Login not completed in time")
+            print("  • Login not completed in browser")
             print("  • Browser was closed manually")
             print("  • Network error")
             print()

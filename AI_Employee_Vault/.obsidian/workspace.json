@@ -179,8 +179,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "2000c3cb3110e76b",
+  "active": "c9095bb6282dfa36",
   "lastOpenFiles": [
+    "Approved/test_linkedin_post.md",
+    "Done/test_linkedin_post.md",
+    "Done/LINKEDIN___thought_leadership_20260405_010652.md",
+    "Logs/2026-04-05.json",
+    "Logs/orchestrator_2026-04-05.log",
+    "Approved/LINKEDIN___thought_leadership_20260405_010652.md",
     "Failed/LINKEDIN___industry_insight_20260402_143348.md",
     "Failed/LINKEDIN___thought_leadership_20260401_155603.md",
     "Failed/LINKEDIN___thought_leadership_20260329_184349.md",
@@ -203,10 +209,6 @@
     "Approved/LINKEDIN___thought_leadership_20260401_155603.md",
     "Needs_Action/FILE_1874cb25bff1_20260401_224929.md",
     "Needs_Action/FILE_a41cd15fc281_20260401_224929.md",
-    "Needs_Action/FILE_1c089fdfa550_20260401_224929.md",
-    "Needs_Action/FILE_6b9d41bd83fd_20260401_224929.md",
-    "Needs_Action/FILE_b1770d9906f1_20260401_224929.md",
-    "Needs_Action/FILE_9e849937e542_20260401_224929.md",
     "Logs/2026-04-01.json",
     "Logs/orchestrator_2026-04-01.log",
     "Logs/orchestrator_2026-03-31.log",
@@ -214,8 +216,6 @@
     "Failed",
     "Logs/2026-03-30.json",
     "Logs/orchestrator_2026-03-30.log",
-    "Pending_Approval/linkedin_test.md.txt",
-    "Pending_Approval/New Text Document.txt",
-    "Pending_Approval/Untitled"
+    "Pending_Approval/linkedin_test.md.txt"
   ]
 }
