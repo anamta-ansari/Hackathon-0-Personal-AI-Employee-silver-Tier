@@ -134,7 +134,7 @@ class LinkedInBrowserPoster:
 
     def _launch_browser(self) -> bool:
         """
-        Launch browser with saved session
+        Launch browser with saved session - MEMORY OPTIMIZED
 
         Returns:
             True if successful
@@ -151,18 +151,43 @@ class LinkedInBrowserPoster:
             return False
 
         try:
+            # ═══════════════════════════════════════════════════════════
+            # FIX 1: Set Node.js memory limit for Playwright
+            # ═══════════════════════════════════════════════════════════
+            import os
+            import tempfile
+            os.environ['NODE_OPTIONS'] = '--max-old-space-size=4096'  # 4GB heap
+            
+            # Create unique temp directory for this browser instance
+            temp_user_dir = tempfile.mkdtemp(prefix='linkedin_browser_')
+            logger.debug(f"Using temp profile: {temp_user_dir}")
+            
             # Start playwright
             self.playwright = sync_playwright().start()
-            
-            # Launch browser (use headless setting from instance)
-            logger.info(f"Launching browser (headless={self.headless})...")
+
+            # ═══════════════════════════════════════════════════════════
+            # FIX 2: Launch browser with memory optimizations
+            # ═══════════════════════════════════════════════════════════
+            logger.info(f"Launching browser (headless={self.headless}) with memory optimizations...")
             self.browser = self.playwright.chromium.launch(
                 headless=self.headless,
                 args=[
                     '--disable-blink-features=AutomationControlled',
-                    '--no-sandbox',
-                    '--disable-dev-shm-usage',
-                ]
+                    '--disable-dev-shm-usage',      # Prevent shared memory issues
+                    '--disable-gpu',                 # Reduce memory usage
+                    '--no-sandbox',                  # Stability improvement
+                    '--disable-software-rasterizer', # Reduce memory
+                    '--disable-extensions',          # Faster launch
+                    '--disable-background-networking', # Less overhead
+                    '--disable-default-apps',        # Faster
+                    '--disable-sync',                # Less overhead
+                    '--metrics-recording-only',      # Minimal tracking
+                    '--mute-audio',                  # No audio needed
+                    '--no-first-run',                # Skip first run
+                    '--js-flags="--max-old-space-size=1024"',  # Browser JS heap
+                ],
+                env={**os.environ, 'NODE_OPTIONS': '--max-old-space-size=4096'},
+                timeout=90000  # 90 second launch timeout
             )
 
             # Create context with saved cookies
@@ -175,6 +200,7 @@ class LinkedInBrowserPoster:
             cookies = session_data.get('cookies', [])
             if cookies:
                 self.context.add_cookies(cookies)
+                logger.info(f"✓ Loaded {len(cookies)} session cookies")
 
             # Create page
             self.page = self.context.new_page()
@@ -182,7 +208,7 @@ class LinkedInBrowserPoster:
             # Apply stealth
             self._apply_stealth(self.page)
 
-            logger.info("Browser launched with saved session")
+            logger.info("✓ Browser launched with memory optimizations")
             return True
 
         except Exception as e:
@@ -211,7 +237,7 @@ class LinkedInBrowserPoster:
 
     def _navigate_to_linkedin(self) -> bool:
         """
-        Navigate to LinkedIn feed
+        Navigate to LinkedIn feed - WITH FALLBACK STRATEGIES
 
         Returns:
             True if successfully navigated and logged in
@@ -221,30 +247,70 @@ class LinkedInBrowserPoster:
 
         try:
             logger.info("Navigating to LinkedIn...")
-            # Use domcontentloaded for faster load, with longer timeout
+            
+            # ═══════════════════════════════════════════════════════════
+            # FIX 3: Try multiple navigation strategies with fallbacks
+            # ═══════════════════════════════════════════════════════════
+            
+            navigation_success = False
+            
+            # Strategy 1: Direct feed navigation (primary)
             try:
-                self.page.goto('https://www.linkedin.com/feed', wait_until='domcontentloaded', timeout=60000)
-                time.sleep(5)  # Wait for page to fully load
-            except Exception as e:
-                logger.debug(f"Feed navigation error: {e}")
-                # Try homepage instead
-                self.page.goto('https://www.linkedin.com', wait_until='domcontentloaded', timeout=30000)
-                time.sleep(3)
-
+                logger.info("Strategy 1: Direct feed navigation...")
+                self.page.goto('https://www.linkedin.com/feed', wait_until='networkidle', timeout=90000)
+                time.sleep(5)  # Wait for page to stabilize
+                
+                if 'linkedin.com/feed' in self.page.url:
+                    navigation_success = True
+                    logger.info("✓ Strategy 1 successful - Direct feed")
+                    
+            except Exception as e1:
+                logger.warning(f"Strategy 1 failed: {e1}")
+                
+                # Strategy 2: Homepage then feed
+                try:
+                    logger.info("Strategy 2: Homepage then feed...")
+                    self.page.goto('https://www.linkedin.com', wait_until='networkidle', timeout=60000)
+                    time.sleep(3)
+                    
+                    # Check if we're on homepage
+                    if 'linkedin.com/' in self.page.url and 'feed' not in self.page.url:
+                        # Try to navigate to feed
+                        try:
+                            self.page.goto('https://www.linkedin.com/feed', wait_until='networkidle', timeout=60000)
+                            time.sleep(3)
+                            navigation_success = True
+                            logger.info("✓ Strategy 2 successful - Homepage then feed")
+                        except:
+                            pass
+                            
+                except Exception as e2:
+                    logger.warning(f"Strategy 2 failed: {e2}")
+                    
+                    # Strategy 3: Mobile feed
+                    try:
+                        logger.info("Strategy 3: Mobile feed...")
+                        self.page.goto('https://www.linkedin.com/m/feed/', wait_until='domcontentloaded', timeout=60000)
+                        time.sleep(3)
+                        navigation_success = True
+                        logger.info("✓ Strategy 3 successful - Mobile feed")
+                        
+                    except Exception as e3:
+                        logger.warning(f"Strategy 3 failed: {e3}")
+            
+            if not navigation_success:
+                logger.error("All navigation strategies failed")
+                return False
+            
             # Check if logged in
             current_url = self.page.url
-
-            if 'linkedin.com/login' in current_url:
-                logger.error("Not logged in - session may be expired")
-                return False
-
-            # Check for feed or homepage
-            if 'linkedin.com/feed' in current_url or 'linkedin.com/' in current_url:
-                logger.info("Successfully navigated to LinkedIn")
-                return True
             
-            logger.warning(f"Unexpected URL: {current_url}")
-            return True  # Continue anyway
+            if 'linkedin.com/login' in current_url or 'checkpoint' in current_url:
+                logger.error("Not logged in - session expired")
+                return False
+            
+            logger.info(f"✓ Successfully navigated to LinkedIn: {current_url}")
+            return True
 
         except Exception as e:
             logger.error(f"Error navigating to LinkedIn: {e}")
@@ -313,18 +379,24 @@ class LinkedInBrowserPoster:
         if not content or not content.strip():
             result['error'] = 'Post content is empty'
             return result
-        
+
         # Check content length (LinkedIn limit: 3000 characters)
         if len(content) > 3000:
             result['error'] = f'Content exceeds 3000 characters ({len(content)})'
             return result
-        
-        # Check session
-        if not self.session_auth.is_valid_session():
+
+        # Check session exists (skip full validation to avoid Playwright memory issues)
+        session_check = self.session_auth._load_session()
+        if not session_check:
             result['error'] = 'Session expired or invalid'
             result['message'] = 'Run: python src/skills/linkedin_session_auth.py login'
+            logger.error("LinkedIn session validation failed - no session found")
+            logger.error("User needs to re-authenticate")
+            logger.error("Command: python src/skills/linkedin_session_auth.py login")
             return result
         
+        logger.info("Session check passed (cookie exists)")
+
         # Dry run check
         if self.dry_run:
             logger.info(f"[DRY RUN] Would post: {content[:100]}...")

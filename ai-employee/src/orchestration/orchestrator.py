@@ -1168,7 +1168,7 @@ AI Employee"""
                         )
                         if post_match:
                             post_content = post_match.group(1).strip()
-                        
+
                         # Also try "# LinkedIn Post Approval Request" → "## Post Content" format
                         if not post_content:
                             approval_match = re.search(
@@ -1196,22 +1196,28 @@ AI Employee"""
                             'error': 'No post content found in file'
                         }
                     else:
-                        # Post using MCP server (more reliable)
-                        execution_result = self._execute_linkedin_post_mcp(
+                        # ═══════════════════════════════════════════════════════════
+                        # SKIP MCP - Go straight to browser to avoid async/sync issues
+                        # ═══════════════════════════════════════════════════════════
+                        
+                        self.logger.info("[LINKEDIN] Using browser automation (MCP skipped)...")
+                        
+                        execution_result = self._execute_linkedin_post_browser(
                             post_content=post_content,
                             post_title=post_title,
+                            image_path=image_path,
                             approval_filename=approved_file.name
                         )
-                        
-                        # If MCP failed, try browser as fallback
+
+                        # If browser failed, provide helpful error message
                         if not execution_result.get('success'):
-                            self.logger.info("[LINKEDIN] MCP failed, trying browser fallback...")
-                            execution_result = self._execute_linkedin_post_browser(
-                                post_content=post_content,
-                                post_title=post_title,
-                                image_path=image_path,
-                                approval_filename=approved_file.name
-                            )
+                            error_msg = execution_result.get('error', 'Unknown error')
+                            self.logger.error(f"[LINKEDIN] Browser posting failed: {error_msg}")
+                            
+                            # Check if it's a session error - provide helpful guidance
+                            if 'session' in error_msg.lower() or 'expired' in error_msg.lower() or 'login' in error_msg.lower():
+                                self.logger.error("[LINKEDIN] SESSION EXPIRED - User needs to re-authenticate")
+                                self.logger.error("[LINKEDIN] Run this command to re-login: python src/skills/linkedin_session_auth.py login")
 
                 else:
                     self.logger.warning(f"[WARN] Unknown action type: {action_type}")

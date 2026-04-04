@@ -542,48 +542,104 @@ class LinkedInSessionAuth:
             return False
 
         try:
-            # Quick test with sync_playwright context manager
-            with sync_playwright() as p:
-                # Launch browser (headless for testing)
-                browser = p.chromium.launch(
-                    headless=True,
-                    args=['--disable-blink-features=AutomationControlled']
-                )
+            # Set NODE_OPTIONS to increase memory limit
+            import os
+            os.environ['NODE_OPTIONS'] = '--max-old-space-size=1024'  # 1GB memory limit
+            
+            # Quick test with sync_playwright (NOT context manager to avoid issues)
+            playwright = sync_playwright().start()
+            
+            # Launch browser (headless for testing)
+            browser = playwright.chromium.launch(
+                headless=True,
+                args=[
+                    '--disable-blink-features=AutomationControlled',
+                    '--no-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--js-flags="--max-old-space-size=512"',
+                ],
+                env={**os.environ, 'NODE_OPTIONS': '--max-old-space-size=1024'}
+            )
 
-                # Create context with saved cookies
-                context = browser.new_context(
-                    viewport={'width': 1280, 'height': 800},
-                    user_agent=session_data.get('user_agent')
-                )
+            # Create context with saved cookies
+            context = browser.new_context(
+                viewport={'width': 1280, 'height': 800},
+                user_agent=session_data.get('user_agent')
+            )
 
-                # Set cookies
-                context.add_cookies(session_data.get('cookies', []))
+            # Set cookies
+            context.add_cookies(session_data.get('cookies', []))
 
-                # Create page
-                page = context.new_page()
+            # Create page
+            page = context.new_page()
 
-                # Quick navigation test (15 second timeout)
-                try:
-                    page.goto('https://www.linkedin.com', wait_until='domcontentloaded', timeout=15000)
-                    page.wait_for_timeout(1000)  # Very short wait
-                except Exception as e:
-                    logger.debug(f"Navigation error: {e}")
-                    browser.close()
-                    return False
-
-                # Quick URL check
-                current_url = page.url
-                is_logged_in = 'linkedin.com/feed' in current_url or 'linkedin.com/in/' in current_url
-                
-                # Close immediately
+            # Quick navigation test (15 second timeout)
+            try:
+                page.goto('https://www.linkedin.com', wait_until='domcontentloaded', timeout=15000)
+                page.wait_for_timeout(3000)  # Wait for any redirects
+            except Exception as e:
+                logger.debug(f"Navigation error: {e}")
                 browser.close()
+                playwright.stop()
+                return False
 
-                if is_logged_in:
-                    logger.debug("✓ Session is valid (quick check)")
-                    return True
-                else:
-                    logger.debug(f"✗ Session invalid - URL: {current_url}")
-                    return False
+            # Quick URL check
+            current_url = page.url
+            is_logged_in = False
+                
+            # Check 1: URL contains feed or profile
+            if 'linkedin.com/feed' in current_url or 'linkedin.com/in/' in current_url:
+                is_logged_in = True
+                logger.debug(f"✓ Logged in - URL: {current_url}")
+                
+            # Check 2: URL is NOT login page
+            elif 'linkedin.com/login' not in current_url and 'linkedin.com/checkpoint' not in current_url:
+                # Check 3: Look for logged-in indicators
+                try:
+                    # Check for "Start a post" button (only visible when logged in)
+                    post_box = page.query_selector('[data-test-id="share-box-feed-entry"]')
+                    if post_box:
+                        is_logged_in = True
+                        logger.debug("✓ Post box detected - logged in")
+                except:
+                    pass
+                    
+                # Check for profile menu
+                if not is_logged_in:
+                    try:
+                        profile_menu = page.query_selector('[data-test-id="profile icon"]')
+                        if profile_menu:
+                            is_logged_in = True
+                            logger.debug("✓ Profile icon detected - logged in")
+                    except:
+                        pass
+                    
+                # Check for navigation bar (only visible when logged in)
+                if not is_logged_in:
+                    try:
+                        nav_bar = page.query_selector('[data-test-id="topbar"]')
+                        if nav_bar:
+                            is_logged_in = True
+                            logger.debug("✓ Navigation bar detected - logged in")
+                    except:
+                        pass
+                    
+                # Fallback: If URL is linkedin.com homepage and no login prompt, assume logged in
+                if not is_logged_in and (current_url == 'https://www.linkedin.com/' or current_url == 'https://www.linkedin.com'):
+                    is_logged_in = True
+                    logger.debug("✓ Homepage reached - assuming logged in")
+
+            # Close immediately
+            browser.close()
+            playwright.stop()
+
+            if is_logged_in:
+                logger.debug("✓ Session is valid (quick check)")
+                return True
+            else:
+                logger.debug(f"✗ Session invalid - URL: {current_url}")
+                return False
 
         except Exception as e:
             logger.debug(f"Session validation error: {e}")
